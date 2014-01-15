@@ -211,47 +211,6 @@ public class QueueTypeResource {
 				queueTypeEntity.setTypename(jsonEntity
 						.optString("typename"));
 			}
-			if (jsonEntity.has("lev1kword1")) {
-				queueTypeEntity.setLev1kword1(jsonEntity
-						.optString("lev1kword1"));
-			}
-			if (jsonEntity.has("lev1kword2")) {
-				queueTypeEntity.setLev1kword2(jsonEntity
-						.optString("lev1kword2"));
-			}
-			if (jsonEntity.has("lev1kword3")) {
-				queueTypeEntity.setLev1kword3(jsonEntity
-						.optString("lev1kword3"));
-			}
-			if (jsonEntity.has("lev1kword4")) {
-				queueTypeEntity.setLev1kword4(jsonEntity
-						.optString("lev1kword4"));
-			}
-			if (jsonEntity.has("lev1kword5")) {
-				queueTypeEntity.setLev1kword5(jsonEntity
-						.optString("lev1kword5"));
-			}
-			if (jsonEntity.has("lev2kword1")) {
-				queueTypeEntity.setLev2kword1(jsonEntity
-						.optString("lev2kword1"));
-			}
-			if (jsonEntity.has("lev2kword2")) {
-				queueTypeEntity.setLev2kword2(jsonEntity
-						.optString("lev2kword2"));
-			}
-			if (jsonEntity.has("lev2kword3")) {
-				queueTypeEntity.setLev2kword3(jsonEntity
-						.optString("lev2kword3"));
-			}
-			if (jsonEntity.has("lev2kword4")) {
-				queueTypeEntity.setLev2kword4(jsonEntity
-						.optString("lev2kword4"));
-			}
-			if (jsonEntity.has("lev2kword5")) {
-				queueTypeEntity.setLev2kword5(jsonEntity
-						.optString("lev2kword5"));
-			}
-		
 			entityManagerConfig.getTransaction().begin();
 			entityManagerConfig.merge(queueTypeEntity);
 			entityManagerConfig.getTransaction().commit();
@@ -326,18 +285,7 @@ public class QueueTypeResource {
 		final JSONObject queueTypeAsJson = ApiResource.getMetaResource(path,
 				QueueTypeResource.class);
 
-		queueTypeAsJson.put("typename", queueTypeEntity.getTypename())
-			.put("lev1kword1", queueTypeEntity.getLev1kword1())
-			.put("lev1kword2", queueTypeEntity.getLev1kword2())
-			.put("lev1kword3", queueTypeEntity.getLev1kword3())
-			.put("lev1kword4", queueTypeEntity.getLev1kword4())
-			.put("lev1kword5", queueTypeEntity.getLev1kword5())
-			.put("lev2kword1", queueTypeEntity.getLev2kword1())
-			.put("lev2kword2", queueTypeEntity.getLev2kword2())
-			.put("lev2kword3", queueTypeEntity.getLev2kword3())
-			.put("lev2kword4", queueTypeEntity.getLev2kword4())
-			.put("lev2kword5", queueTypeEntity.getLev2kword5());
-
+		queueTypeAsJson.put("typename", queueTypeEntity.getTypename());
 		return queueTypeAsJson;
 	}
 	

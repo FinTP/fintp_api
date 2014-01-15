@@ -166,19 +166,6 @@ public class QueueTypesResource extends PagedCollection {
 		try {
 			//Fill required data
 			queueTypeEntity.setTypename(jsonEntity.getString("typename"));
-			
-			//Fill optional data
-			queueTypeEntity.setLev1kword1(jsonEntity.optString("lev1kword1"));
-			queueTypeEntity.setLev1kword2(jsonEntity.optString("lev1kword2"));
-			queueTypeEntity.setLev1kword3(jsonEntity.optString("lev1kword3"));
-			queueTypeEntity.setLev1kword4(jsonEntity.optString("lev1kword4"));
-			queueTypeEntity.setLev1kword5(jsonEntity.optString("lev1kword5"));
-			queueTypeEntity.setLev2kword1(jsonEntity.optString("lev2kword1"));
-			queueTypeEntity.setLev2kword2(jsonEntity.optString("lev2kword2"));
-			queueTypeEntity.setLev2kword3(jsonEntity.optString("lev2kword3"));
-			queueTypeEntity.setLev2kword4(jsonEntity.optString("lev2kword4"));
-			queueTypeEntity.setLev2kword5(jsonEntity.optString("lev2kword5"));
-
 			entityManagerConfig.getTransaction().begin();
 			entityManagerConfig.persist(queueTypeEntity);
 			id = entityManagerConfig.getEntityManagerFactory()
