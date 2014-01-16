@@ -1,3 +1,22 @@
+/*
+* FinTP - Financial Transactions Processing Application
+* Copyright (C) 2013 Business Information Systems (Allevo) S.R.L.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>
+* or contact Allevo at : 031281 Bucuresti, 23C Calea Vitan, Romania,
+* phone +40212554577, office@allevo.ro <mailto:office@allevo.ro>, www.allevo.ro.
+*/
 package ro.allevo.fintpws.resources;
 
 import java.util.List;
@@ -35,7 +54,7 @@ public class MessageTypesResource extends PagedCollection {
 	 * Field ERROR_MESSAGE_GET_MESSAGES. (value is ""Error returning messages :
 	 * "")
 	 */
-	static final String ERROR_MESSAGE_GET_MESSAGES = "Error returning messages : ";
+	static final String ERROR_MESSAGE_GET_MESSAGETYPES = "Error returning messages : ";
 	/**
 	 * Field ERROR_REASON_JSON. (value is ""json"")
 	 */
@@ -84,8 +103,8 @@ public class MessageTypesResource extends PagedCollection {
 			getPage();
 			return asJson();
 		} catch (JSONException je) {
-			logger.error(ERROR_MESSAGE_GET_MESSAGES + ERROR_REASON_JSON, je);
-			throw new ApplicationJsonException(je, ERROR_MESSAGE_GET_MESSAGES
+			logger.error(ERROR_MESSAGE_GET_MESSAGETYPES + ERROR_REASON_JSON, je);
+			throw new ApplicationJsonException(je, ERROR_MESSAGE_GET_MESSAGETYPES
 					+ ERROR_REASON_JSON,
 					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
@@ -98,15 +117,15 @@ public class MessageTypesResource extends PagedCollection {
 	 */
 	@SuppressWarnings("unchecked")
 	public JSONObject asJson() throws JSONException {
-		JSONObject messagesAsJson = super.asJson();
+		JSONObject messageTypesAsJson = super.asJson();
 
 		// fill data
 		List<?> items = getItems();
 
 		if (items.size() > 0) {
-			messagesAsJson.put("messagetypes", (List<String>) items);
+			messageTypesAsJson.put("messagetypes", (List<String>) items);
 		}
 
-		return messagesAsJson;
+		return messageTypesAsJson;
 	}
 }

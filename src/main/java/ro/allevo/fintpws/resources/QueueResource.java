@@ -229,6 +229,23 @@ public class QueueResource {
 		return new MessagesResource(uriInfo, entityManagerData,
 				entityManagerConfig, queueEntity);
 	}
+	
+	/**
+	 * Method getMessageTypes.
+	 * 
+	 * @return MessageTypesResource
+	 */
+	@Path("messagetypes")
+	public MessageTypesResource getMessageTypes() {
+		if (null == this.queueEntity) {
+			logger.error(String.format(ERROR_MESSAGE_Q_NOT_FOUND,
+					this.queueName));
+			throw new EntityNotFoundException(String.format(
+					ERROR_MESSAGE_Q_NOT_FOUND, this.queueName));
+		}
+		return new MessageTypesResource(uriInfo, entityManagerData,
+				entityManagerConfig, queueEntity);
+	}
 
 	/**
 	 * Method getServiceMaps.
