@@ -54,8 +54,6 @@ import ro.allevo.fintpws.security.RolesUtils;
 import ro.allevo.fintpws.util.JsonResponseWrapper;
 import ro.allevo.fintpws.util.ResourcesUtils;
 
-//test commit 
-
 /**
  * Resource class implementing /queues/{name} path methods.
  * 
