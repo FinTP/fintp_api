@@ -99,10 +99,7 @@ public class UserEntity implements UserDetails  {
 				"RoleEntity.findUserAuthorities", RoleEntity.class);
 		List<RoleEntity> authorities = query.setParameter("userid",
 				userid).getResultList();
-		if (!authorities.isEmpty()) {
-			return authorities;
-		}
-		return null;
+		return authorities;
 	}
 
 	public long getUserid(){
