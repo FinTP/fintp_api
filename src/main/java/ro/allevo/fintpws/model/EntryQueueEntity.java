@@ -1,23 +1,3 @@
-/*
-* FinTP - Financial Transactions Processing Application
-* Copyright (C) 2013 Business Information Systems (Allevo) S.R.L.
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>
-* or contact Allevo at : 031281 Bucuresti, 23C Calea Vitan, Romania,
-* phone +40212554577, office@allevo.ro <mailto:office@allevo.ro>, www.allevo.ro.
-*/
-
 package ro.allevo.fintpws.model;
 
 import java.io.Serializable;
@@ -37,7 +17,14 @@ import java.math.BigDecimal;
 		@NamedQuery(name = "EntryQueueEntity.findByGuid", query = "SELECT b FROM EntryQueueEntity b "
 				+ "WHERE trim(b.guid) = :guid"),
 		@NamedQuery(name = "EntryQueueEntity.findTotalQueue", query = "SELECT count(b) FROM EntryQueueEntity b "
-				+ "WHERE b.queuename=:queuename") })
+				+ "WHERE b.queuename=:queuename"),
+		@NamedQuery(name = "EntryQueueEntity.findDistinctMessagesQueue", query = "SELECT distinct r.msgtype FROM EntryQueueEntity b "
+				+ " join b.routedmessage r where b.queuename= :queuename"),
+		@NamedQuery(name = "EntryQueueEntity.findTotalDistinctMessagesQueue", query = "SELECT count(distinct r.msgtype)   FROM EntryQueueEntity b "
+				+ " join b.routedmessage r where b.queuename= :queuename"),
+		@NamedQuery(name = "EntryQueueEntity.findGroupMessagesQueue", query = "SELECT distinct r.msgtype FROM EntryQueueEntity b "
+				+ " join b.routedmessage r where b.queuename= :queuename") })
+
 @Cacheable(false)
 public class EntryQueueEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
