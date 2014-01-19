@@ -1,11 +1,23 @@
 fintp_api
 =========
 
-FinTP RESTful api
+FinTP RESTful API. The API enables 3rd party applications to communicate with the FinTP central repository of messages.
 
 Facts
 -----
 - version: 0.0.1
+
+Usage
+-----
+See https://github.com/FinTP/fintp_api/wiki/Usage for a list of usage scenarios.
+
+Installation
+-----
+See https://github.com/FinTP/fintp_api/wiki/Installation for steps required to install and configure the API.
+
+Contributing
+-----
+See http://www.fintp.org/how-to-contribute for a list of areas where help is needed.
 
 Requirements
 ------------
@@ -13,8 +25,12 @@ Requirements
 - Apache Tomcat 7
 - Maven
 
+Running the tests
+-----
+See https://github.com/FinTP/fintp_api/wiki/Running-the-tests for steps required to run the automated tests.
+
 Issues
-------
+-----
 - Due the binary license there is no public repository that contains the Oracle Driver JAR. 
 - Solutions:
 	1. Comment dependency if you are using Postgres database
@@ -22,11 +38,11 @@ Issues
 	-DgroupId=com.oracle -DartifactId=ojdbc6\ -Dversion=11.2.0.3.0 -Dpackaging=jar -Dfile=ojdbc.jar -DgeneratePom=true )
 
 License
--------
+-----
 - [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html)
 
 Copyright
----------
+-----
 FinTP - Financial Transactions Processing Application
 Copyright (C) 2013 Business Information Systems (Allevo) S.R.L.
 
