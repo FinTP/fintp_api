@@ -22,21 +22,24 @@ package ro.allevo.fintpws.util;
 
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
@@ -186,6 +189,18 @@ public final class ResourcesUtils {
 		
 		return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 				.format(timestamp);
+	}
+	
+	/**
+	 * Method getTime.
+	 * 
+	 * @param stringTime
+	 *            String
+	 * @return Time
+	 * @throws ParseException
+	 */
+	public static String getISODate(Date date) throws ParseException {
+		return new SimpleDateFormat("yyyy-MM-dd").format(date);
 	}
 
 	/**
@@ -364,7 +379,7 @@ public final class ResourcesUtils {
 	 * @throws UnsupportedEncodingException
 	 */
 	
-/*	
+	
 	public static TypedQuery<?> getTypedQuery(UriInfo uriInfo,
 			EntityManager em, Class<?> entity, String filterName,
 			String filterValue) {
@@ -404,18 +419,21 @@ public final class ResourcesUtils {
 				try {
 					// Check if there are field in entity
 					queryRoot.get(filterEntityName);
-					if (filterFiled.endsWith(FILTER_TYPE_EXACT)) {
-						predicate = cb.and(predicate, cb.equal(
-								queryRoot.get(filterEntityName),
-								params.getFirst(filterFiled)));
-					} else {
-						if (filterFiled.endsWith(FILTER_TYPE_CONTAINS)) {
+					
+					switch(filterFiled.substring(filterFiled.indexOf('_'))){
+						case FILTER_TYPE_EXACT: 
+							System.out.println("...........--..........");
+							predicate = cb.and(predicate, cb.equal(
+									queryRoot.get(filterEntityName),
+									params.getFirst(filterFiled)));
+							break;
+						case FILTER_TYPE_CONTAINS:
 							predicate = cb.and(predicate, cb.like(
 									queryRoot.<String> get(filterEntityName),
 									"%" + params.getFirst(filterFiled) + "%"));
-						} else {
-							if (entity.getDeclaredField(filterEntityName)
-									.getType().toString()
+							break;
+						default:
+							if (queryRoot.get(filterEntityName).getJavaType().toString()
 									.contains("java.sql.Timestamp")) {
 
 								if (filterFiled.endsWith(FILTER_TYPE_END)) {
@@ -436,64 +454,61 @@ public final class ResourcesUtils {
 																	.getFirst(filterFiled))));
 								}
 							} else {
-								if (entity.getDeclaredField(filterEntityName)
-										.getType().isEnum()) {
-									Method methodFromName = entity
-											.getDeclaredField(filterEntityName)
-											.getType()
-											.getDeclaredMethod("fromName",
-													String.class);
-									@SuppressWarnings("unchecked")
-									Enum enumVal = Enum
-											.valueOf(
-													(Class<Enum>) entity
-															.getDeclaredField(
-																	filterEntityName)
-															.getType(),
-													methodFromName
-															.invoke("fromName",
-																	params.getFirst(filterFiled))
-															.toString());
-									predicate = cb
-											.and(predicate,
-													cb.like(queryRoot
-															.<String> get(filterEntityName),
-															enumVal.ordinal()
-																	+ "%"));
-
-								} else {
 									predicate = cb
 											.and(predicate,
 													cb.like(queryRoot
 															.<String> get(filterEntityName),
 															params.getFirst(filterFiled)
 																	+ "%"));
+							}
+							break;
+					}
+					
+					/*
+					if (filterFiled.endsWith(FILTER_TYPE_EXACT)) {
+						predicate = cb.and(predicate, cb.equal(
+								queryRoot.get(filterEntityName),
+								params.getFirst(filterFiled)));
+					} else {
+						if (filterFiled.endsWith(FILTER_TYPE_CONTAINS)) {
+							predicate = cb.and(predicate, cb.like(
+									queryRoot.<String> get(filterEntityName),
+									"%" + params.getFirst(filterFiled) + "%"));
+						} else {
+							if (queryRoot.get(filterEntityName).getJavaType().toString()
+									.contains("java.sql.Timestamp")) {
+
+								if (filterFiled.endsWith(FILTER_TYPE_END)) {
+									predicate = cb
+											.and(predicate,
+													cb.lessThanOrEqualTo(
+															queryRoot
+																	.<Timestamp> get(filterEntityName),
+															getTimestamp(params
+																	.getFirst(filterFiled))));
+								} else {
+									predicate = cb
+											.and(predicate,
+													cb.greaterThanOrEqualTo(
+															queryRoot
+																	.<Timestamp> get(filterEntityName),
+															getTimestamp(params
+																	.getFirst(filterFiled))));
 								}
+							} else {
+									predicate = cb
+											.and(predicate,
+													cb.like(queryRoot
+															.<String> get(filterEntityName),
+															params.getFirst(filterFiled)
+																	+ "%"));
+
 							}
 						}
-					}
-				} catch (IllegalArgumentException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (SecurityException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (NoSuchFieldException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (ParseException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (IllegalAccessException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (NoSuchMethodException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (InvocationTargetException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				}
+					}*/
+					}  catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();				}
 			}
 		}
 		if (null != filterName) {
@@ -503,8 +518,7 @@ public final class ResourcesUtils {
 		query.where(predicate);
 		return em.createQuery(query);
 
-	}*/
-
+	}
 	/**
 	 * Method getCountTypedQuery.
 	 * 
@@ -522,7 +536,8 @@ public final class ResourcesUtils {
 	 * @throws SecurityException
 	 * @throws NoSuchFieldException
 	 */
-	/*
+	
+	
 	public static TypedQuery<?> getCountTypedQuery(UriInfo uriInfo,
 			EntityManager em, Class<?> entity, String filterName,
 			String filterValue) {
@@ -560,6 +575,7 @@ public final class ResourcesUtils {
 						} else {
 							if (entity.getDeclaredField(filterEntityName)
 									.getType().toString()
+									
 									.contains("java.sql.Timestamp")) {
 								if (filterFiled.endsWith(FILTER_TYPE_END)) {
 									predicate = cb
@@ -615,25 +631,7 @@ public final class ResourcesUtils {
 							}
 						}
 					}
-				} catch (IllegalArgumentException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (SecurityException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (NoSuchFieldException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (ParseException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (IllegalAccessException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (NoSuchMethodException e) {
-					// skip filter field
-					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
-				} catch (InvocationTargetException e) {
+				} catch (Exception e) {
 					// skip filter field
 					logger.error(ERROR_REASON_REFLECTION_ERROR, e);
 				}
@@ -647,7 +645,7 @@ public final class ResourcesUtils {
 
 		return em.createQuery(query);
 
-	}*/
+	}
 
 	/**
 	 * Method hasSortOrFilter.
