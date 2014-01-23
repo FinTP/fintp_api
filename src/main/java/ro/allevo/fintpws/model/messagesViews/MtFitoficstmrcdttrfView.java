@@ -30,11 +30,13 @@ import javax.persistence.*;
  */
 @Entity
 @NamedQueries({
+	@NamedQuery(name = "MtFitoficstmrcdttrfView.findByGuid", query="SELECT m FROM MtFitoficstmrcdttrfView m where m.guid=:guid"),// where m.receiver = :receiver and m.valuedate = :valuedate"),
 	@NamedQuery(name = "MtFitoficstmrcdttrfView.findAll", query="SELECT m FROM MtFitoficstmrcdttrfView m"),// where m.receiver = :receiver and m.valuedate = :valuedate"),
 	@NamedQuery(name = "MtFitoficstmrcdttrfView.findTotal", query = "SELECT count(m.guid) FROM MtFitoficstmrcdttrfView m"),// where m.receiver = :receiver and m.valuedate = :valuedate"),
 	@NamedQuery(name = "MtFitoficstmrcdttrfView.findAllGroups", query="SELECT m.receiver,m.valuedate FROM MtFitoficstmrcdttrfView m GROUP BY m.receiver,m.valuedate"),
 	@NamedQuery(name = "MtFitoficstmrcdttrfView.findTotalGroups", query = "SELECT count(m.receiver) FROM MtFitoficstmrcdttrfView m GROUP BY m.receiver,m.valuedate")
 })
+@Cacheable(false)
 public class MtFitoficstmrcdttrfView implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -56,6 +58,10 @@ public class MtFitoficstmrcdttrfView implements Serializable {
 	private String sender;
 
 	private String trn;
+	
+	@Lob()
+	@Column(nullable = false)
+	private String payload;
 
 	@Convert(converter = ro.allevo.fintpws.converters.DateConverter.class)
 	private Date valuedate;
@@ -135,5 +141,14 @@ public class MtFitoficstmrcdttrfView implements Serializable {
 	public void setValuedate(Date valuedate) {
 		this.valuedate = valuedate;
 	}
+	
+	public String getPayload() {
+		return payload;
+	}
+
+	public void setPayload(String payload) {
+		this.payload = payload;
+	}
+
 
 }
