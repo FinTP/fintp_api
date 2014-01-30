@@ -31,7 +31,7 @@ Requirements
 
 Running the tests
 -----
-See https://github.com/FinTP/fintp_api/wiki/Running-the-tests for steps required to run the automated tests.
+See [Running the Tests](https://github.com/FinTP/fintp_api/wiki/Running-the-tests) for steps required to run the automated tests.
 
 Issues
 -----
