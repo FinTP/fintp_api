@@ -7,17 +7,21 @@ Facts
 -----
 - version: 0.0.1
 
+Building
+-----
+See [Build Instructions](https://github.com/FinTP/fintp_api/wiki/Build-instructions) for instructions on how to build the API.
+
 Usage
 -----
-See https://github.com/FinTP/fintp_api/wiki/Usage for a list of usage scenarios.
+See [Usage](https://github.com/FinTP/fintp_api/wiki/Usage) for a list of usage scenarios.
 
 Installation
 -----
-See https://github.com/FinTP/fintp_api/wiki/Installation for steps required to install and configure the API.
+See [Installation](https://github.com/FinTP/fintp_api/wiki/Installation) for steps required to install and configure the API.
 
 Contributing
 -----
-See http://www.fintp.org/how-to-contribute for a list of areas where help is needed.
+See [How To Contribute](http://www.fintp.org/how-to-contribute) for a list of areas where help is needed.
 
 Requirements
 ------------
@@ -27,7 +31,7 @@ Requirements
 
 Running the tests
 -----
-See https://github.com/FinTP/fintp_api/wiki/Running-the-tests for steps required to run the automated tests.
+See [Running the Tests](https://github.com/FinTP/fintp_api/wiki/Running-the-tests) for steps required to run the automated tests.
 
 Issues
 -----
