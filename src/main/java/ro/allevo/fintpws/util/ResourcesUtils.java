@@ -214,12 +214,6 @@ public final class ResourcesUtils {
 	public static Timestamp getTime(String stringTime) throws ParseException {
 
 		Timestamp finalTimestamp = optTime(stringTime);
-
-		if(null == finalTimestamp){
-			System.out.println(new Time(System.currentTimeMillis()));
-		}else{
-			System.out.println(finalTimestamp);
-		}
 		return (null == finalTimestamp) ? new Timestamp(System.currentTimeMillis())
 				: finalTimestamp;
 	}
@@ -422,7 +416,6 @@ public final class ResourcesUtils {
 					
 					switch(filterFiled.substring(filterFiled.indexOf('_'))){
 						case FILTER_TYPE_EXACT: 
-							System.out.println("...........--..........");
 							predicate = cb.and(predicate, cb.equal(
 									queryRoot.get(filterEntityName),
 									params.getFirst(filterFiled)));

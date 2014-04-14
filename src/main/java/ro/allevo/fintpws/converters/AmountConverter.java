@@ -34,7 +34,6 @@ public class AmountConverter implements AttributeConverter<Double, String>{
 
 	@Override
 	public Double convertToEntityAttribute(String attributeType) {
-		System.out.println("dbType.."+attributeType);
 		double d = 0.0;
 		if(attributeType != null){
 			switch(attributeType){

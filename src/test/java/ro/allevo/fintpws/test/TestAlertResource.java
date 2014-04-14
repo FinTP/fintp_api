@@ -119,8 +119,6 @@ public class TestAlertResource {
 				.put("type", "new message")
 				.put("description", desc)
 				.put("queueid", queue.getString("guid"));
-		System.out.println(alert);
-		
 		return TestHelper
 				.assertResponseCreated(wr, "POST", ALERTS_PATH, alert);
 	}

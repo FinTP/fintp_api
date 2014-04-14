@@ -271,7 +271,6 @@ public class RoleResource {
 	public Response updateRole(JSONObject jsonEntity) {
 		if (userid != -1) {
 			try {
-				System.out.println("here");
 				return Response
 						.status(405)
 						.entity(JsonResponseWrapper.getEntity(405,

@@ -170,7 +170,6 @@ public class RolesResource extends PagedCollection {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response postRole(JSONObject jsonEntity) {
 		String id = "-1";
-		System.out.println(userEntity);
 		URI roleUri = null;
 		try {
 			//check if you will insert role, a role for a specific user
