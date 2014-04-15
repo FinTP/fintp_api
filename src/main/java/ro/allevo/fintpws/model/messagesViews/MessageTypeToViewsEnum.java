@@ -93,8 +93,8 @@ public enum MessageTypeToViewsEnum {
 	
 	public Query getFindByGuidQuery(
 			EntityManager entityManager, String guid){
-		return entityManager.createNativeQuery("SELECT v FROM " + clazz.getSimpleName() + " v " +
-				"WHERE v.guid = :guid" , clazz).setParameter("guid", guid);
+		return entityManager.createNativeQuery("SELECT * FROM " + clazz.getSimpleName() +
+				" WHERE GUID = ?" , clazz).setParameter(1, guid);
 	}
 	
 	public Class<? extends SpecificViewAbstract> getClazz() {
