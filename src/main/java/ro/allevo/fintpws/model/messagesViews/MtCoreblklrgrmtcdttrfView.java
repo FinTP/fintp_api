@@ -31,63 +31,35 @@ import javax.persistence.Transient;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import ro.allevo.fintpws.util.ResourcesUtils;
-
 /**
  * @author remus
  * @version $Revision: 1.0 $ The persistent class for the
- *          MTFITOFICSTMRCDTTRFVIEW database view.
+ *          MTCOREBLKLRGRMTCDTTRFVIEW database view
  */
 @Entity
-public class MtFitoficstmrcdttrfView extends  SpecificViewAbstract  implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class MtCoreblklrgrmtcdttrfView extends  SpecificViewAbstract implements Serializable  {
 
-	private BigDecimal amount;
-
-	private String currency;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -854041260242708438L;
 
 	@Id
 	private String guid;
-
 	private String msgtype;
-
-	private String queuename;
-
-	private String receiver;
-
 	private String sender;
-
+	private String receiver;
 	private String trn;
-
+	private Timestamp insertdate;
+	private BigDecimal amount;
+	private String currency;
 	private String valuedate;
-
+	private String service;
+	private String queuename;
 	private String payload;
 
-	// @Convert(converter =
-	// ro.allevo.fintpws.converters.DateAndTimeConverter.class)
-	private Timestamp insertdate;
-
-	public MtFitoficstmrcdttrfView() {
-	}
-
-	public BigDecimal getAmount() {
-		return this.amount;
-	}
-
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-
-	public String getCurrency() {
-		return this.currency;
-	}
-
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
-
 	public String getGuid() {
-		return this.guid;
+		return guid;
 	}
 
 	public void setGuid(String guid) {
@@ -95,47 +67,79 @@ public class MtFitoficstmrcdttrfView extends  SpecificViewAbstract  implements S
 	}
 
 	public String getMsgtype() {
-		return this.msgtype;
+		return msgtype;
 	}
 
 	public void setMsgtype(String msgtype) {
 		this.msgtype = msgtype;
 	}
 
-	public String getQueuename() {
-		return this.queuename;
-	}
-
-	public void setQueuename(String queuename) {
-		this.queuename = queuename;
-	}
-
-	public String getReceiver() {
-		return this.receiver;
-	}
-
-	public void setReceiver(String receiver) {
-		this.receiver = receiver;
-	}
-
 	public String getSender() {
-		return this.sender;
+		return sender;
 	}
 
 	public void setSender(String sender) {
 		this.sender = sender;
 	}
 
+	public String getReceiver() {
+		return receiver;
+	}
+
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
+	}
+
 	public String getTrn() {
-		return this.trn;
+		return trn;
 	}
 
 	public void setTrn(String trn) {
 		this.trn = trn;
 	}
 
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public String getQueuename() {
+		return queuename;
+	}
+
+	public void setQueuename(String queuename) {
+		this.queuename = queuename;
+	}
+
+	public String getPayload() {
+		return payload;
+	}
+
+	public void setPayload(String payload) {
+		this.payload = payload;
+	}
+
 	public Timestamp getInsertdate() {
-		return this.insertdate;
+		return insertdate;
 	}
 
 	public void setInsertdate(Timestamp insertdate) {
@@ -150,26 +154,16 @@ public class MtFitoficstmrcdttrfView extends  SpecificViewAbstract  implements S
 		this.valuedate = valuedate;
 	}
 
-	public String getPayload() {
-		return payload;
-	}
-
-	public void setPayload(String payload) {
-		this.payload = payload;
-	}
-
+	@Override
 	@Transient
 	public JSONObject toJSON() throws JSONException {
 		JSONObject entityAsJson = new JSONObject();
-		entityAsJson
-				.put("guid", getGuid())
-				.put("insertdate",
-						ResourcesUtils.getIsoDateFromTimestamp(getInsertdate()))
+		entityAsJson.put("guid", getGuid()).put("messagetype", getMsgtype())
 				.put("sender", getSender()).put("receiver", getReceiver())
-				.put("trn", getTrn()).put("amount", getAmount())
-				.put("currency", getCurrency())
-				.put("valuedate", getValuedate()).put("payload", getPayload());
+				.put("trn", getTrn()).put("valuedate", getValuedate())
+				.put("insertdate", getInsertdate()).put("amount", getAmount())
+				.put("currency", getCurrency()).put("service", getService())
+				.put("queuename", getQueuename()).put("payload", getPayload());
 		return entityAsJson;
 	}
-
 }
