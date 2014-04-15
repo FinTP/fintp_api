@@ -1,22 +1,22 @@
 /*
-* FinTP - Financial Transactions Processing Application
-* Copyright (C) 2013 Business Information Systems (Allevo) S.R.L.
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>
-* or contact Allevo at : 031281 Bucuresti, 23C Calea Vitan, Romania,
-* phone +40212554577, office@allevo.ro <mailto:office@allevo.ro>, www.allevo.ro.
-*/
+ * FinTP - Financial Transactions Processing Application
+ * Copyright (C) 2013 Business Information Systems (Allevo) S.R.L.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ * or contact Allevo at : 031281 Bucuresti, 23C Calea Vitan, Romania,
+ * phone +40212554577, office@allevo.ro <mailto:office@allevo.ro>, www.allevo.ro.
+ */
 
 package ro.allevo.fintpws.resources;
 
@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
@@ -49,6 +50,8 @@ import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.model.EntryQueueEntity;
 import ro.allevo.fintpws.model.QueueEntity;
 import ro.allevo.fintpws.model.RoutedMessageEntity;
+import ro.allevo.fintpws.model.messagesViews.MessageTypeToViewsEnum;
+import ro.allevo.fintpws.model.messagesViews.SpecificViewAbstract;
 import ro.allevo.fintpws.security.RolesUtils;
 import ro.allevo.fintpws.util.JsonResponseWrapper;
 import ro.allevo.fintpws.util.ReflectionUtils;
@@ -132,6 +135,11 @@ public class MessageResource {
 	private EntryQueueEntity messageQueueEntity;
 
 	/**
+	 * Field viewEntity
+	 */
+	private SpecificViewAbstract viewEntity;
+	
+	/**
 	 * Field isMessageInQueue.
 	 */
 	private boolean isMessageInQueue = false;
@@ -150,6 +158,11 @@ public class MessageResource {
 	 * Field queueEntity.
 	 */
 	private QueueEntity queueEntity = null;
+	
+	/**
+	 * Field isView
+	 */
+	private boolean isView = false;
 	
 	/**
 	 * Creates a new instance of MessageResource
@@ -177,6 +190,19 @@ public class MessageResource {
 		this.needsPayload = needsPayload;
 		this.messageId = messageId;
 		this.queueEntity = queueEntity;
+		
+		if(uriInfo.getQueryParameters().containsKey("type")){
+			MessageTypeToViewsEnum messageType = MessageTypeToViewsEnum
+					.getMessageType(uriInfo.getQueryParameters().getFirst(
+							"type"));
+			Query query = messageType.getFindByGuidQuery(entityManagerData, messageId);
+			List<? extends SpecificViewAbstract> results = query.getResultList();
+			if(!results.isEmpty()){
+				viewEntity = results.get(0);
+			}
+			return;
+		}
+		
 		if(isMessageInQueue){
 			TypedQuery<EntryQueueEntity> query = entityManagerData.createNamedQuery(
 					"EntryQueueEntity.findByGuid", EntryQueueEntity.class);
@@ -213,6 +239,7 @@ public class MessageResource {
 	public JSONObject findDetailsMessage(JSONObject message)
 			throws IllegalAccessException, InstantiationException,
 			ClassNotFoundException, JSONException, IllegalArgumentException, SecurityException {
+		
 		
 		String msgType = "";
 		if (null == messageEntity) {
@@ -265,12 +292,15 @@ public class MessageResource {
 				throw new AccessDeniedException("forbidden");
 			}
 		}
-		if (null == messageEntity && null == messageQueueEntity) {
+		if (null == messageEntity && null == messageQueueEntity && null == viewEntity) {
 		logger.error(String.format(ERROR_MESSAGE_M_NOT_FOUND, messageId));
 			throw new EntityNotFoundException(String.format(
 					ERROR_MESSAGE_M_NOT_FOUND, messageId));
 		}
 		try {
+			if(null != viewEntity){
+				return viewEntity.toJSON();
+			}
 			if (null == messageEntity){
 				return findDetailsMessage(MessageResource.asJson(
 					messageQueueEntity,

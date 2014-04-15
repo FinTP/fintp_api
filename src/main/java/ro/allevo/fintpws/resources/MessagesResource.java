@@ -1,28 +1,29 @@
 /*
-* FinTP - Financial Transactions Processing Application
-* Copyright (C) 2013 Business Information Systems (Allevo) S.R.L.
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>
-* or contact Allevo at : 031281 Bucuresti, 23C Calea Vitan, Romania,
-* phone +40212554577, office@allevo.ro <mailto:office@allevo.ro>, www.allevo.ro.
-*/
+ * FinTP - Financial Transactions Processing Application
+ * Copyright (C) 2013 Business Information Systems (Allevo) S.R.L.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ * or contact Allevo at : 031281 Bucuresti, 23C Calea Vitan, Romania,
+ * phone +40212554577, office@allevo.ro <mailto:office@allevo.ro>, www.allevo.ro.
+ */
 
 package ro.allevo.fintpws.resources;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -33,6 +34,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -49,8 +51,11 @@ import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.model.EntryQueueEntity;
 import ro.allevo.fintpws.model.QueueEntity;
 import ro.allevo.fintpws.model.RoutedMessageEntity;
+import ro.allevo.fintpws.model.messagesViews.SpecificViewAbstract;
+import ro.allevo.fintpws.model.messagesViews.MessageTypeToViewsEnum;
 import ro.allevo.fintpws.security.RolesUtils;
 import ro.allevo.fintpws.util.JsonResponseWrapper;
+import ro.allevo.fintpws.util.ResourcesUtils;
 
 /**
  * Resource class implementing /messages path methods and acting as
@@ -104,6 +109,11 @@ public class MessagesResource extends PagedCollection {
 	 */
 	private boolean needsPayload = false;
 
+	/**
+	 * Field isDisplayFeatureRequested
+	 */
+	private boolean isDisplayFeatureRequested = false;
+
 	// actual uri info provided by parent resource
 	/**
 	 * Field uriInfo.
@@ -123,7 +133,7 @@ public class MessagesResource extends PagedCollection {
 	 * Field queueEntity.
 	 */
 	private QueueEntity queueEntity = null;
-	
+
 	/**
 	 * Creates a new instance of MessagesResource
 	 * 
@@ -133,23 +143,58 @@ public class MessagesResource extends PagedCollection {
 	 *            EntityManager
 	 * @param queueEntity
 	 *            QueueEntity
-	 * @param entityManagerConfig EntityManager
+	 * @param entityManagerConfig
+	 *            EntityManager
 	 */
-	public MessagesResource(UriInfo uriInfo, EntityManager entityManagerData, EntityManager entityManagerConfig,
-			QueueEntity queueEntity) {
-		super(uriInfo, entityManagerData.createNamedQuery(
-				"RoutedMessageEntity.findAll", RoutedMessageEntity.class),
-				entityManagerData.createNamedQuery(
+	public MessagesResource(UriInfo uriInfo, EntityManager entityManagerData,
+			EntityManager entityManagerConfig, QueueEntity queueEntity) {
+		super(uriInfo, entityManagerData);
+
+		if (uriInfo.getQueryParameters().containsKey("type")) {
+			MessageTypeToViewsEnum messageType = MessageTypeToViewsEnum
+					.getMessageType(uriInfo.getQueryParameters().getFirst(
+							"type"));
+			this.isDisplayFeatureRequested = true;
+			Timestamp atArgument = null;
+			if (uriInfo.getQueryParameters().containsKey("at")) {
+				try {
+					atArgument = ResourcesUtils.getTimestamp(uriInfo
+							.getQueryParameters().getFirst("at"));
+					this.entityClass = messageType.getClazz();
+
+				} catch (ParseException e) {
+					// TODO: throw json bad request exception
+					e.printStackTrace();
+				}
+
+			}
+			// TODO: throw here right JSONException for bad request
+
+			this.entityClass = messageType.getClazz();
+			this.setItemsQuery(messageType.getItemsQuery(entityManagerData,
+					atArgument));
+			this.setTotalQuery(messageType.getTotalQuery(entityManagerData,
+					atArgument));
+
+		} else {
+			if (null != queueEntity) {
+				this.isMessageInQueue = true;
+				this.setItemsQuery(entityManagerData
+						.createNamedQuery("EntryQueueEntity.findAllQueue",
+								EntryQueueEntity.class).setParameter(
+								"queuename", queueEntity.getName()));
+				this.setTotalQuery(entityManagerData.createNamedQuery(
+						"EntryQueueEntity.findTotalQueue", Long.class)
+						.setParameter("queuename", queueEntity.getName()));
+				this.entityClass = EntryQueueEntity.class;
+			} else {
+				this.setItemsQuery(entityManagerData.createNamedQuery(
+						"RoutedMessageEntity.findAll",
+						RoutedMessageEntity.class));
+				this.setTotalQuery(entityManagerData.createNamedQuery(
 						"RoutedMessageEntity.findTotalFeedbackagg", Long.class));
-		if (null != queueEntity) {
-			this.isMessageInQueue = true;
-			this.setItemsQuery(entityManagerData
-					.createNamedQuery("EntryQueueEntity.findAllQueue",
-							EntryQueueEntity.class)
-					.setParameter("queuename", queueEntity.getName()));
-			this.setTotalQuery(entityManagerData.createNamedQuery(
-					"EntryQueueEntity.findTotalQueue", Long.class)
-					.setParameter("queuename", queueEntity.getName()));
+				this.entityClass = RoutedMessageEntity.class;
+			}
 		}
 		boolean containFilter = uriInfo.getQueryParameters().containsKey(
 				"filter");
@@ -161,6 +206,15 @@ public class MessagesResource extends PagedCollection {
 		this.entityManagerData = entityManagerData;
 		this.entityManagerConfig = entityManagerConfig;
 		this.queueEntity = queueEntity;
+
+		// adding filter options
+		// check if filter through queue is made
+		if (queueEntity != null) {
+			filterResource("queuename", queueEntity.getName());
+		} else {
+			filterResource();
+		}
+
 	}
 
 	/**
@@ -172,27 +226,31 @@ public class MessagesResource extends PagedCollection {
 	 */
 	@Path("{id}")
 	public MessageResource getMessage(@PathParam("id") String messageGuid) {
-		return new MessageResource(uriInfo, entityManagerData, entityManagerConfig, messageGuid,
-				isMessageInQueue, needsPayload, queueEntity);
+		return new MessageResource(uriInfo, entityManagerData,
+				entityManagerConfig, messageGuid, isMessageInQueue,
+				needsPayload, queueEntity);
 	}
 
 	/**
 	 * GET method : returns an application/json formatted list of messages
+	 * 
 	 * @return JSONObject The list of messages
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public JSONObject getMessagesAsJson() {
-		//authorization
-		if(isMessageInQueue){
-			if(!RolesUtils.hasReadAuthorityOnQueue(queueEntity)){
+	public JSONObject getMessagesAsJson(@QueryParam("type") String type) {
+		// authorization
+		if (isMessageInQueue) {
+			if (!RolesUtils.hasReadAuthorityOnQueue(queueEntity)) {
 				throw new AccessDeniedException("forbidden");
 			}
-		}else{
-			if(!RolesUtils.hasReportsRole()){
+		} else {
+			if (!RolesUtils.hasReportsRole()) {
 				throw new AccessDeniedException("forbidden");
 			}
 		}
+
+		// get type from query
 		try {
 			getPage();
 			return asJson();
@@ -202,10 +260,12 @@ public class MessagesResource extends PagedCollection {
 					+ ERROR_REASON_JSON,
 					Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		}
+
 	}
 
 	/**
 	 * POST method : creates a message
+	 * 
 	 * @param jsonEntity
 	 *            JSONObject The message to be created
 	 * @return Response The URI of the newly created message * @throws
@@ -226,47 +286,50 @@ public class MessagesResource extends PagedCollection {
 		}
 		EntryQueueEntity entryQueueEntity = new EntryQueueEntity();
 		try {
-			if(jsonEntity.has("guid")){
+			if (jsonEntity.has("guid")) {
 				entryQueueEntity.setGuid(jsonEntity.getString("guid"));
 			}
-			if(jsonEntity.has("batchid")){
+			if (jsonEntity.has("batchid")) {
 				entryQueueEntity.setBatchid(jsonEntity.optString("batchid"));
 			}
-			if(jsonEntity.has("correlationid")){
-				entryQueueEntity.setCorrelationid(jsonEntity.optString("correlationid"));
+			if (jsonEntity.has("correlationid")) {
+				entryQueueEntity.setCorrelationid(jsonEntity
+						.optString("correlationid"));
 			}
 			entryQueueEntity.setRequestorservice(jsonEntity
 					.getString("requestorservice"));
-			if(jsonEntity.has("responderservice")){
+			if (jsonEntity.has("responderservice")) {
 				entryQueueEntity.setResponderservice(jsonEntity
-					.optString("responderservice"));
+						.optString("responderservice"));
 			}
 			entryQueueEntity
 					.setRequesttype(jsonEntity.getString("requesttype"));
-			if(jsonEntity.has("feedback")){
+			if (jsonEntity.has("feedback")) {
 				entryQueueEntity.setFeedback(jsonEntity.optString("feedback"));
 			}
-			if(jsonEntity.has("sessionid")){
-				entryQueueEntity.setSessionid(jsonEntity.optString("sessionid"));
+			if (jsonEntity.has("sessionid")) {
+				entryQueueEntity
+						.setSessionid(jsonEntity.optString("sessionid"));
 			}
-			if(jsonEntity.has("priority")){
+			if (jsonEntity.has("priority")) {
 				entryQueueEntity.setPriority(new BigDecimal(jsonEntity
-					.getInt("priority")));
+						.getInt("priority")));
 			}
-			if(jsonEntity.has("holdstatus")){
+			if (jsonEntity.has("holdstatus")) {
 				entryQueueEntity.setHoldstatus(new BigDecimal(jsonEntity
-					.getInt("holdstatus")));
+						.getInt("holdstatus")));
 			}
-			if(jsonEntity.has("sequence")){
+			if (jsonEntity.has("sequence")) {
 				entryQueueEntity.setSequence(new BigDecimal(jsonEntity
-					.getInt("sequence")));
+						.getInt("sequence")));
 			}
-			if(jsonEntity.has("payload")){
+			if (jsonEntity.has("payload")) {
 				entryQueueEntity.setPayload(jsonEntity.getString("payload"));
 			}
-			if(jsonEntity.has("queuename")){
-				entryQueueEntity.setQueuename(jsonEntity.getString("queuename"));
-			}else{
+			if (jsonEntity.has("queuename")) {
+				entryQueueEntity
+						.setQueuename(jsonEntity.getString("queuename"));
+			} else {
 				if (null != queueEntity) {
 					entryQueueEntity.setQueuename(queueEntity.getName());
 				}
@@ -287,10 +350,12 @@ public class MessagesResource extends PagedCollection {
 					Response.Status.BAD_REQUEST.getStatusCode());
 		} catch (RollbackException re) {
 			// traverse the cause to find a possible constraint violation
-			ApplicationJsonException.handleSQLException(re, ERROR_MESSAGE_POST_MESSAGES, logger);
-			
+			ApplicationJsonException.handleSQLException(re,
+					ERROR_MESSAGE_POST_MESSAGES, logger);
+
 			// log and rethrow the original error
-			logger.error(ERROR_MESSAGE_POST_MESSAGES + ERROR_REASON_ROLLBACK, re);
+			logger.error(ERROR_MESSAGE_POST_MESSAGES + ERROR_REASON_ROLLBACK,
+					re);
 			throw re;
 		} finally {
 			if (null != entityManagerData) {
@@ -313,33 +378,37 @@ public class MessagesResource extends PagedCollection {
 		JSONObject messagesAsJson = super.asJson();
 
 		// fill data
-		JSONArray queuesArray = new JSONArray();
+		JSONArray messagesArray = new JSONArray();
 		List<?> items = getItems();
 
 		if (items.size() > 0) {
-			if (null != queueEntity){
-				for (EntryQueueEntity messageEntity : (List<EntryQueueEntity>) items) {
-					queuesArray.put(MessageResource.asJson(
-							messageEntity,
-							isMessageInQueue,
-							needsPayload,
-							UriBuilder.fromPath(getUriInfo().getPath())
-									.path(messageEntity.getGuid()).build()
-									.getPath()));
+			if (isDisplayFeatureRequested) {
+				for (SpecificViewAbstract messageEntity : (List<? extends SpecificViewAbstract>) items) {
+					messagesArray.put(messageEntity.toJSON());
 				}
-			}else{
-				for (RoutedMessageEntity messageEntity : (List<RoutedMessageEntity>) items) {
-					queuesArray.put(MessageResource.asJson(
-							messageEntity,
-							isMessageInQueue,
-							needsPayload,
-							UriBuilder.fromPath(getUriInfo().getPath())
-									.path(messageEntity.getGuid()).build()
-									.getPath()));
+			} else {
+
+				if (null != queueEntity) {
+					for (EntryQueueEntity messageEntity : (List<EntryQueueEntity>) items) {
+						messagesArray.put(MessageResource.asJson(messageEntity,
+								isMessageInQueue, needsPayload,
+								UriBuilder.fromPath(getUriInfo().getPath())
+										.path(messageEntity.getGuid()).build()
+										.getPath()));
+					}
+				} else {
+					for (RoutedMessageEntity messageEntity : (List<RoutedMessageEntity>) items) {
+						messagesArray.put(MessageResource.asJson(messageEntity,
+								isMessageInQueue, needsPayload,
+								UriBuilder.fromPath(getUriInfo().getPath())
+										.path(messageEntity.getGuid()).build()
+										.getPath()));
+					}
 				}
 			}
 		}
-		messagesAsJson.put("messages", queuesArray);
+		messagesAsJson.put("messages", messagesArray);
 		return messagesAsJson;
 	}
+
 }

@@ -22,6 +22,7 @@ package ro.allevo.fintpws.resources;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
@@ -30,6 +31,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+
+import ro.allevo.fintpws.util.JpaFilter;
+
 
 /**
  * @author horia
@@ -71,6 +75,10 @@ public class PagedCollection {
 	 * Field MAX_PAGE_SIZE. (value is 100)
 	 */
 	private static final int MAX_PAGE_SIZE = 100;
+	
+	private EntityManager entityManager = null;
+	protected Class<?> entityClass = null;
+	
 
 	private int page;
 	private int pageSize;
@@ -79,12 +87,31 @@ public class PagedCollection {
 
 	// actual uri info provided by parent resource
 	private UriInfo uriInfo;
-	private Query itemsQuery;
+	protected Query itemsQuery;
 	private Query totalQuery;
 
 	private boolean needsTotal;
 	private boolean hasMore;
 
+
+	/**
+	 * Constructor for PagedCollection.
+	 * 
+	 * @param uriInfo
+	 *            UriInfo
+	 * @param query
+	 *            Query
+	 */
+	public PagedCollection(UriInfo uriInfo, EntityManager entityManager){
+		this.entityManager = entityManager;
+		this.uriInfo = uriInfo;
+		this.total = 0;
+		this.page = DEFAULT_PAGE;
+		this.pageSize = DEFAULT_PAGE_SIZE;
+		this.hasMore = false;
+		this.needsTotal = false;
+	}
+	
 	/**
 	 * Constructor for PagedCollection.
 	 * 
@@ -105,6 +132,44 @@ public class PagedCollection {
 	}
 
 	/**
+	 * Constructor for PagedCollection.
+	 * 
+	 * @param uriInfo
+	 *            UriInfo
+	 * @param query
+	 *            Query
+	 */
+	public PagedCollection(UriInfo uriInfo, Query itemsQuery, Query totalQuery, EntityManager entityManager, Class<?> entityClass) {
+		this(uriInfo, itemsQuery, totalQuery);
+		this.entityManager = entityManager;
+		this.entityClass = entityClass;
+	}
+	
+	/**
+	 * Method filterResource. Changes the items query by performing filter and sort options based on
+	 * query parameters and values.
+	 */
+	protected void filterResource(){
+		MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
+		if(entityManager != null)
+			itemsQuery = new JpaFilter(uriInfo, entityManager, entityClass).createQuery();
+	}
+	
+	/**
+	 * @param filterName
+	 * @param filterValue
+	 * 
+	 * Method filterResource. Changes the items query by performing filter and sort options based on
+	 * query parameters and values. Besides query parameters, the method modifies the query by performing
+	 * an initial filtering based on the two parameters 
+	 */
+	protected void filterResource(String filterName, String filterValue) {
+		MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
+		if(entityManager != null)
+			itemsQuery = new JpaFilter(uriInfo, entityManager, entityClass,
+				filterName, filterValue).createQuery();
+	}
+	/**
 	 * Method getPage. Sanitizes the input query string parameters [page] and
 	 * [page_size] and retrieves the requested page of items from the database
 	 * page_size is limited to 100 If page is invalid ( not a number, <1 ), the
@@ -114,6 +179,7 @@ public class PagedCollection {
 	protected void getPage() {
 		MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
 
+		
 		// get page
 		page = DEFAULT_PAGE;
 		if (params.containsKey(PARAM_PAGE)) {
