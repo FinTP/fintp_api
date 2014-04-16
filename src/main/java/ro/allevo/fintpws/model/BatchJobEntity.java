@@ -2,6 +2,7 @@ package ro.allevo.fintpws.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
 import java.sql.Timestamp;
 import java.math.BigDecimal;
 
@@ -12,6 +13,12 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(schema="FINDATA", name="BATCHJOBS")
+@NamedQueries({
+	@NamedQuery(name = "BatchJobEntity.findByGuid", query = "SELECT r FROM BatchJobEntity r "
+			+ "WHERE r.combatchid=:id"),
+	@NamedQuery(name = "BatchJobEntity.findAll", query = "SELECT r FROM BatchJobEntity r ORDER BY r.combatchid asc"),
+	@NamedQuery(name = "BatchJobEntity.findTotal", query = "SELECT count(r.combatchid) FROM BatchJobEntity r")
+})
 public class BatchJobEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
