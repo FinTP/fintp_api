@@ -175,6 +175,10 @@ public class MessagesResource extends PagedCollection {
 					atArgument));
 			this.setTotalQuery(messageType.getTotalQuery(entityManagerData,
 					atArgument));
+			
+			if(null != queueEntity){
+				this.isMessageInQueue = false;
+			}
 
 		} else {
 			if (null != queueEntity) {
