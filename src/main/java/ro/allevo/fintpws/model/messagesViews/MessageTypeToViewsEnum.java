@@ -67,7 +67,7 @@ public enum MessageTypeToViewsEnum {
 		if(stringToMessageTypeEnum == null){
 			initMapping();
 		}
-		return stringToMessageTypeEnum.get(type);
+		return stringToMessageTypeEnum.get(type.toLowerCase());
 	}
 
 
