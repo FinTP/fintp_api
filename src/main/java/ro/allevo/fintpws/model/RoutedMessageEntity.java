@@ -104,7 +104,7 @@ public class RoutedMessageEntity implements Serializable {
 	@JoinColumn(name = "CORRELID", referencedColumnName = "CORRELID", insertable = false, updatable = false)
 	private FeedbackaggEntity feedbackagg;
 */
-	private BigDecimal amount;
+	private String amount;
 	
 	public EntryQueueEntity getEntryQueue() {
 		return entryqueue;
@@ -231,11 +231,11 @@ public class RoutedMessageEntity implements Serializable {
 		this.userid = userid;
 	}
 
-	public BigDecimal getAmount() {
+	public String getAmount() {
 		return amount;
 	}
 
-	public void setAmount(BigDecimal amount) {
+	public void setAmount(String amount) {
 		this.amount = amount;
 	}
 

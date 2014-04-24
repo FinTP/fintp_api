@@ -303,7 +303,7 @@ public class TestMessageResource {
 			routedMessageEntity.setCorrelationid(message
 					.getString("correlationid"));
 			routedMessageEntity.setTrn("Transaction");
-			routedMessageEntity.setAmount(new BigDecimal(1));
+			routedMessageEntity.setAmount("1");
 
 			emd.getTransaction().begin();
 			emd.persist(routedMessageEntity);
