@@ -25,7 +25,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -301,6 +303,30 @@ public class ApiResource {
 		EntityManager emc = configEntityManagerFactory.createEntityManager();
 		return new RolesResource(uriInfo, emc);
 	}
+	
+	/**
+	 * Sub-resource locator for /batches resource
+	 * 
+	 * @return BatchesResource
+	 */
+	@Path("batches")
+	public BatchesResource getBatches(){
+		EntityManager emd = dataEntityManagerFactory.createEntityManager();
+		return new BatchesResource(uriInfo, emd);
+	}
+	
+	/**
+	 * Sub-resource locator for /batchrequests resource
+	 * 
+	 * @return BatchRequestResource
+	 */
+	@Path("batchrequests")
+	public BatchRequestsResource getBatchRequests(){
+		EntityManager emd = dataEntityManagerFactory.createEntityManager();
+		return new BatchRequestsResource(uriInfo, emd);
+	}
+	
+
 
 	@GET
 	@Produces(MediaType.TEXT_HTML)

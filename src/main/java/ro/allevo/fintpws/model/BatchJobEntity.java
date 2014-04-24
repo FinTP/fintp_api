@@ -16,9 +16,12 @@ import java.math.BigDecimal;
 @NamedQueries({
 	@NamedQuery(name = "BatchJobEntity.findByGuid", query = "SELECT r FROM BatchJobEntity r "
 			+ "WHERE r.combatchid=:id"),
+	@NamedQuery(name = "BatchJobEntity.findByBatchID", query = "SELECT r FROM BatchJobEntity r "
+			+ "WHERE r.batchuid=:id"),
 	@NamedQuery(name = "BatchJobEntity.findAll", query = "SELECT r FROM BatchJobEntity r ORDER BY r.combatchid asc"),
 	@NamedQuery(name = "BatchJobEntity.findTotal", query = "SELECT count(r.combatchid) FROM BatchJobEntity r")
 })
+@Cacheable(false)
 public class BatchJobEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
