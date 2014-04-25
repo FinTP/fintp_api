@@ -37,6 +37,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
@@ -246,11 +247,13 @@ public class MessagesResource extends PagedCollection {
 		// authorization
 		if (isMessageInQueue) {
 			if (!RolesUtils.hasReadAuthorityOnQueue(queueEntity)) {
-				throw new AccessDeniedException("forbidden");
+				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+						Status.FORBIDDEN.getStatusCode());
 			}
 		} else {
 			if (!RolesUtils.hasReportsRole()) {
-				throw new AccessDeniedException("forbidden");
+				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+						Status.FORBIDDEN.getStatusCode());
 			}
 		}
 

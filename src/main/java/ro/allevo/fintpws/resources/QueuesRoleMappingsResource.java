@@ -35,6 +35,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -156,7 +157,8 @@ public class QueuesRoleMappingsResource extends PagedCollection {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response postMapping(JSONObject jsonEntity) {
 		if (!RolesUtils.hasAdministratorRole()) {
-			throw new AccessDeniedException("Access denied");
+			throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+					Status.FORBIDDEN.getStatusCode());
 		}
 		String id;
 		final QueuesRoleMapEntity mappingEntity = new QueuesRoleMapEntity();

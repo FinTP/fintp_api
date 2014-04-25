@@ -23,6 +23,7 @@ package ro.allevo.fintpws.exceptions;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
+import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -104,5 +105,15 @@ public class ApplicationJsonException extends WebApplicationException {
 			}
 			t = t.getCause();
 		}
+	}
+
+	public static void handleSQLException(PersistenceException e,
+			String errorContext, Logger logger) {
+		// TODO Auto-generated method stub
+		Throwable t = e.getCause();
+		logger.error(errorContext + t.getMessage(), t);
+		throw new ApplicationJsonException(e, errorContext
+				+ t.getMessage(),
+				Response.Status.BAD_REQUEST.getStatusCode());
 	}
 }

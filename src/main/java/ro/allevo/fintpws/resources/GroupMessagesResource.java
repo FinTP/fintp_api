@@ -40,6 +40,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,11 +50,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
 
 import ro.allevo.fintpws.exceptions.ApplicationJsonException;
-import ro.allevo.fintpws.model.EntryQueueEntity;
 import ro.allevo.fintpws.model.QueueEntity;
-import ro.allevo.fintpws.model.messagesViews.MtFitoficstmrcdttrfView;
 import ro.allevo.fintpws.security.RolesUtils;
-import ro.allevo.fintpws.util.JsonResponseWrapper;
 
 /**
  * @author costi
@@ -154,7 +152,8 @@ public class GroupMessagesResource extends PagedCollection {
 	public JSONObject getMessagesAsJson() {logger.debug(queueEntity);
 		//authorization
 		if(!RolesUtils.hasReadAuthorityOnQueue(queueEntity)){
-			throw new AccessDeniedException("forbidden");
+			throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+					Status.FORBIDDEN.getStatusCode()) ;
 		}
 		
 		try {

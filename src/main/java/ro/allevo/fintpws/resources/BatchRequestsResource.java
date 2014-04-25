@@ -23,6 +23,8 @@ package ro.allevo.fintpws.resources;
 import java.net.URI;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
 import javax.persistence.StoredProcedureQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -37,6 +39,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.eclipse.persistence.exceptions.DatabaseException;
+import org.postgresql.util.PSQLException;
 
 import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.util.JsonResponseWrapper;
@@ -147,7 +151,15 @@ public class BatchRequestsResource {
 			throw new ApplicationJsonException(e,
 					ERROR_MESSAGE_POST_BATCH_REQUESTS + ERROR_REASON_JSON,
 					Response.Status.BAD_REQUEST.getStatusCode());
-		} finally {
+		} 
+		catch (PersistenceException e) {
+			e.printStackTrace();
+			ApplicationJsonException.handleSQLException(e,
+					ERROR_MESSAGE_POST_BATCH_REQUESTS, logger);
+			throw e;
+		}
+		
+		finally {
 			if(null != entityManager){
 				entityManager.close();
 			}

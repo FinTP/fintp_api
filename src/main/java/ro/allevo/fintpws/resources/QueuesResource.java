@@ -36,6 +36,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -152,7 +153,8 @@ public class QueuesResource extends PagedCollection {
 	@Produces(MediaType.APPLICATION_JSON)
 	public JSONObject getQueuesAsJson() {
 		if(!RolesUtils.hasUserOrAdministratorRole()){
-			throw new AccessDeniedException("Access denied");
+			throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+					Status.FORBIDDEN.getStatusCode());
 		}
 		try {
 			getPage();
@@ -177,7 +179,8 @@ public class QueuesResource extends PagedCollection {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response postForm(JSONObject jsonEntity) {
 		if(!RolesUtils.hasAdministratorRole()){
-			throw new AccessDeniedException("Access denied");
+			throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+					Status.FORBIDDEN.getStatusCode());
 		}
 		final QueueEntity queueEntity = new QueueEntity();
 		try {

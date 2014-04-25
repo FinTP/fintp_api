@@ -38,6 +38,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -285,11 +286,13 @@ public class MessageResource {
 		// authorization
 		if (isMessageInQueue) {
 			if (!RolesUtils.hasReadAuthorityOnQueue(queueEntity)) {
-				throw new AccessDeniedException("forbidden");
+				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+						Status.FORBIDDEN.getStatusCode());
 			}
 		} else {
 			if (!RolesUtils.hasReportsRole()) {
-				throw new AccessDeniedException("forbidden");
+				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+						Status.FORBIDDEN.getStatusCode());
 			}
 		}
 		if (null == messageEntity && null == messageQueueEntity && null == viewEntity) {
@@ -370,11 +373,13 @@ public class MessageResource {
 	public Response updateMessage(JSONObject jsonEntity) {
 		if (isMessageInQueue) {
 			if (!RolesUtils.hasWriteAuthorityOnQueue(queueEntity)) {
-				throw new AccessDeniedException("forbidden");
+				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+						Status.FORBIDDEN.getStatusCode());
 			}
 		} else {
 			if (!RolesUtils.hasReportsRole()) {
-				throw new AccessDeniedException("forbidden");
+				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+						Status.FORBIDDEN.getStatusCode());
 			}
 		}
 		if (null == messageQueueEntity) {
@@ -470,11 +475,13 @@ public class MessageResource {
 	public Response deleteMessage() {
 		if (isMessageInQueue) {
 			if (!RolesUtils.hasWriteAuthorityOnQueue(queueEntity)) {
-				throw new AccessDeniedException("forbidden");
+				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+						Status.FORBIDDEN.getStatusCode());
 			}
 		} else {
 			if (!RolesUtils.hasReportsRole()) {
-				throw new AccessDeniedException("forbidden");
+				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+						Status.FORBIDDEN.getStatusCode());
 			}
 		}
 		if (null == messageEntity && null == messageQueueEntity ) {
