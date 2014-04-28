@@ -109,11 +109,12 @@ public class ApplicationJsonException extends WebApplicationException {
 
 	public static void handleSQLException(PersistenceException e,
 			String errorContext, Logger logger) {
-		// TODO Auto-generated method stub
+		//this exception occurs when data_changed exception is thrown
+		
 		Throwable t = e.getCause();
 		logger.error(errorContext + t.getMessage(), t);
 		throw new ApplicationJsonException(e, errorContext
 				+ t.getMessage(),
-				Response.Status.BAD_REQUEST.getStatusCode());
+				Response.Status.NOT_ACCEPTABLE.getStatusCode());
 	}
 }
