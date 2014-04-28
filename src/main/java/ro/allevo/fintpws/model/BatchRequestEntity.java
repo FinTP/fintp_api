@@ -3,13 +3,16 @@ package ro.allevo.fintpws.model;
 import java.io.Serializable;
 
 import javax.persistence.Cacheable;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedStoredProcedureQuery;
 import javax.persistence.ParameterMode;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -25,7 +28,13 @@ import javax.persistence.TableGenerator;
 @NamedQueries({
 	@NamedQuery(name = "BatchRequestEntity.findAllByGroupKey", 
 			query = "SELECT br FROM BatchRequestEntity br "
-			+ "WHERE br.groupkey=:key")
+			+ "WHERE br.groupkey=:key"),
+	@NamedQuery(name = "BatchRequestEntity.findGroupKeysByUser",
+			query = "SELECT DISTINCT br.groupkey FROM BatchRequestEntity br " 
+			+ "WHERE br.userEntity = :user"),
+	@NamedQuery(name = "BatchRequestEntity.findAllGroupKeys",
+		query = "SELECT DISTINCT br.groupkey FROM BatchRequestEntity br ")
+
 })
 @NamedStoredProcedureQuery(
 		name="createBatchRequest",
@@ -52,6 +61,11 @@ public class BatchRequestEntity implements Serializable {
 	private String requestid;
 	private String batchuid;
 	private String groupkey;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@PrimaryKeyJoinColumn(name = "USERID")
+	private UserEntity userEntity;
+	
 
 	public BatchRequestEntity() {
 	}
@@ -59,10 +73,6 @@ public class BatchRequestEntity implements Serializable {
 
 	public String getBatchuid() {
 		return this.batchuid;
-	}
-
-	public void setBatchuid(String batchuid) {
-		this.batchuid = batchuid;
 	}
 
 
@@ -73,5 +83,16 @@ public class BatchRequestEntity implements Serializable {
 	public void setGroupkey(String groupkey) {
 		this.groupkey = groupkey;
 	}
+	
+	
+	public UserEntity getUserEntity() {
+		return userEntity;
+	}
+
+
+	
+
+
+	
 
 }

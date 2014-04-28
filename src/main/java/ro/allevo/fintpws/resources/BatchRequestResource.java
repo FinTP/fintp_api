@@ -43,6 +43,7 @@ import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.model.BatchJobEntity;
 import ro.allevo.fintpws.model.BatchRequestEntity;
 
+
 /**
  * Resource class implementing /batchrequests/{groupkey} path methods
  * 
@@ -102,6 +103,7 @@ public class BatchRequestResource {
 	 * group key
 	 */
 	private String groupKey;
+	
 	
 	/**
 	 * Constructor
@@ -167,6 +169,8 @@ public class BatchRequestResource {
 		float processedCount = 0;
 		float totalCount = 0;
 		boolean inProgress = false;
+		int countNew = 0, countInProgress = 0, countReady = 0, countFailed = 0, countSuccess = 0;
+		
 		for (BatchRequestEntity batchRequestEntity : batchRequestEntities) {
 			String batchUid = batchRequestEntity.getBatchuid();
 			final TypedQuery<BatchJobEntity> query = entityManager
@@ -174,6 +178,7 @@ public class BatchRequestResource {
 							BatchJobEntity.class).setParameter("id",
 							batchUid);
 			List<BatchJobEntity> batches = query.getResultList();
+		
 			for (BatchJobEntity batch : batches) {
 				processedCount += batch.getDefjobcount();
 				totalCount += batch.getBatchcount();
@@ -184,18 +189,69 @@ public class BatchRequestResource {
 				if (batch.getBatchstatus() < 20) {
 					inProgress = true;
 				}
+				
+				BatchStatus status = BatchStatus.fromInteger(batch.getBatchstatus()); 
+				switch (status) {
+				case FAILED:
+					countFailed++;
+					break;
+				case NEW:
+					countNew++;
+					break;
+				case IN_PROGRESS:
+					countInProgress++;
+					break;
+				case READY:
+					countReady++;
+					break;
+				case SUCCESS:
+					countSuccess++;
+					break;
+				}
 			}
 		}
 		
+		
 		if (inProgress) {
 			float percentage = processedCount / totalCount * 100;
-			JSONObject entity = new JSONObject().put("code", 202).put(
-					"progress", percentage);
+			JSONObject entity = new JSONObject()
+				.put("code", 202)
+				.put("progress", percentage)
+				.put("batch_ids", comBatchIds)
+				.put("done", countSuccess)
+				.put("failed", countFailed)
+				.put("ready", countReady)
+				.put("in progress", countInProgress)
+				.put("new", countNew);
 			return Response.status(Status.ACCEPTED).entity(entity).build();
 		}
 
 		requestAsJson.put("groupkey", groupKey);
 		requestAsJson.put("batch_ids", comBatchIds);
 		return Response.status(Status.CREATED).entity(requestAsJson).build();
+	}
+	
+	private enum BatchStatus{
+		NEW(0),
+		IN_PROGRESS(10),
+		READY(15),
+		FAILED(20),
+		SUCCESS(30);
+		
+		private final int value;
+		private BatchStatus(int value){
+			this.value = value;
+		}
+		
+		public static BatchStatus fromInteger(int value) {
+			for (BatchStatus status : BatchStatus.values()) {
+				if (status.value == value) {
+					return status;
+				}
+			}
+			//TODO: throw illegal exception
+			return null;
+		}
+		
 	}
 }

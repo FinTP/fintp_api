@@ -32,6 +32,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Persistence;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -203,5 +204,8 @@ public class UserEntity implements UserDetails  {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	@OneToMany(mappedBy="userEntity")
+	private List<BatchRequestEntity> batchRequests;
 
 }

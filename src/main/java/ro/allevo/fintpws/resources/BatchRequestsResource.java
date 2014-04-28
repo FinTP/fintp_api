@@ -21,15 +21,20 @@
 package ro.allevo.fintpws.resources;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 import javax.persistence.StoredProcedureQuery;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -37,12 +42,14 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.eclipse.persistence.exceptions.DatabaseException;
 import org.postgresql.util.PSQLException;
 
 import ro.allevo.fintpws.exceptions.ApplicationJsonException;
+import ro.allevo.fintpws.model.UserEntity;
 import ro.allevo.fintpws.util.JsonResponseWrapper;
 
 public class BatchRequestsResource {
@@ -92,6 +99,10 @@ public class BatchRequestsResource {
 	 * Field uriInfo 
 	 */
 	private UriInfo uriInfo;
+	/**
+	 * Field userEntity
+	 */
+	private UserEntity userEntity = null;
 	
 	/**
 	 * Creates a new instance of BatchRequestsResource
@@ -104,6 +115,12 @@ public class BatchRequestsResource {
 	public BatchRequestsResource(UriInfo uriInfo, EntityManager entityManager) {
 		this.uriInfo = uriInfo;
 		this.entityManager = entityManager;
+		
+		if (uriInfo.getQueryParameters().containsKey("user")) {
+			userEntity = UserResource.findByUsername(
+					ApiResource.entitiyManagerConfig, uriInfo
+							.getQueryParameters().getFirst("user"));
+		}
 	}
 
 	/**
@@ -115,6 +132,39 @@ public class BatchRequestsResource {
 	public BatchRequestResource getBatchRequest(@PathParam("groupkey") String groupKey){
 		return new BatchRequestResource(uriInfo, entityManager, groupKey);
 	}
+	
+	/**
+	 * GET method : returns an application/json formatted list of batches
+	 * 
+	 * @return JSONObject The list of group keys
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public JSONObject getBatchesAsJson() {
+		
+		TypedQuery<String> query = null;
+		if(null == userEntity){
+			query = ApiResource.entitiyManagerData
+					.createNamedQuery("BatchRequestEntity.findAllGroupKeys", String.class);
+		}else{
+			query = ApiResource.entitiyManagerData
+					.createNamedQuery("BatchRequestEntity.findGroupKeysByUser", String.class);
+			query.setParameter("user", userEntity);
+		}
+		JSONObject response = new JSONObject();
+		JSONArray groupKeysArray = new JSONArray();
+		List<String> groupKeys = query.getResultList();
+		for(String groupKey : groupKeys){
+			groupKeysArray.put(groupKey);
+		}
+		try {
+			response.put("groupkeys", groupKeys);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return response;
+	}
+	
 	
 	/**
 	 * POST method : creates a batch request
