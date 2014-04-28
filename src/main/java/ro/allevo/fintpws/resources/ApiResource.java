@@ -84,6 +84,22 @@ public class ApiResource {
 	 * Field dataEntityManagerFactory.
 	 */
 	private EntityManagerFactory dataEntityManagerFactory;
+	
+	//TODO: check out this approach
+	/**
+	 * Field constant entityManagerConfig
+	 */
+	public static final EntityManager entitiyManagerConfig =
+			Persistence
+			.createEntityManagerFactory(PERSISTENCE_UNITNAME_CONFIG)
+			.createEntityManager();
+	/**
+	 * Field constant entityManagerData
+	 */
+	public static final EntityManager entitiyManagerData =
+			Persistence
+			.createEntityManagerFactory(PERSISTENCE_UNITNAME_DATA)
+			.createEntityManager();
 
 	/** Creates a new instance of ApiResource */
 	public ApiResource() {
