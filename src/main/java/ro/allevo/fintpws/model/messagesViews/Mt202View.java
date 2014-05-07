@@ -37,7 +37,7 @@ import org.codehaus.jettison.json.JSONObject;
  *          view.
  */
 @Entity
-public class Mt202View extends SpecificViewAbstract implements Serializable{
+public class Mt202View extends MtView implements Serializable{
 
 	/*
 	 * TODO: try to use only one query, investigate how to specify time stamp

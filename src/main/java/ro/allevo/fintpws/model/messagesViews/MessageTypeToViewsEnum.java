@@ -35,11 +35,6 @@ import javax.persistence.Query;
  */
 public enum MessageTypeToViewsEnum {
 
-	/*
-	 * TODO: check if it is OK to build queries, instead of hardcoding them
-	 * thus, when implementing MessageEntity one should respect naming convensions
-	 * (resolve this after the named query task is solved
-	 */
 	MT_103("103", Mt103View.class), 
 	MT_202("202", Mt202View.class),
 	MT_FITOFICSTMRCDTTRF("fitoficstmrcdttrf", MtFitoficstmrcdttrfView.class),
@@ -47,11 +42,11 @@ public enum MessageTypeToViewsEnum {
 	
 	
 	private String type;
-	private Class<? extends SpecificViewAbstract> clazz;
+	private Class<? extends MtView> clazz;
 	private static Map<String, MessageTypeToViewsEnum> stringToMessageTypeEnum;
 	
 	
-	private MessageTypeToViewsEnum(String type, Class<? extends SpecificViewAbstract> clazz) {
+	private MessageTypeToViewsEnum(String type, Class<? extends MtView> clazz) {
 		this.type = type;
 		this.clazz = clazz;
 	}
@@ -97,7 +92,7 @@ public enum MessageTypeToViewsEnum {
 				" WHERE GUID = ?" , clazz).setParameter(1, guid);
 	}
 	
-	public Class<? extends SpecificViewAbstract> getClazz() {
+	public Class<? extends MtView> getClazz() {
 		return clazz;
 	}
 }

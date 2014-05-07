@@ -29,7 +29,7 @@ import org.codehaus.jettison.json.JSONObject;
  * 
  */
 
-public abstract class SpecificViewAbstract {
+public abstract class MtView {
 
 	/** returns a JSON object specific to the view
 	 * 
@@ -37,9 +37,5 @@ public abstract class SpecificViewAbstract {
 	 * @throws JSONException
 	 */
 	public abstract JSONObject toJSON() throws JSONException;
-	
-	/*
-	 * TODO: query on abstract non-entity when eclipselink will allow id
-	 */
 	
 }

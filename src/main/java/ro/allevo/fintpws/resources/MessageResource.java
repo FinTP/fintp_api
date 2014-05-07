@@ -52,7 +52,7 @@ import ro.allevo.fintpws.model.EntryQueueEntity;
 import ro.allevo.fintpws.model.QueueEntity;
 import ro.allevo.fintpws.model.RoutedMessageEntity;
 import ro.allevo.fintpws.model.messagesViews.MessageTypeToViewsEnum;
-import ro.allevo.fintpws.model.messagesViews.SpecificViewAbstract;
+import ro.allevo.fintpws.model.messagesViews.MtView;
 import ro.allevo.fintpws.security.RolesUtils;
 import ro.allevo.fintpws.util.JsonResponseWrapper;
 import ro.allevo.fintpws.util.ReflectionUtils;
@@ -138,7 +138,7 @@ public class MessageResource {
 	/**
 	 * Field viewEntity
 	 */
-	private SpecificViewAbstract viewEntity;
+	private MtView viewEntity;
 	
 	/**
 	 * Field isMessageInQueue.
@@ -197,7 +197,7 @@ public class MessageResource {
 					.getMessageType(uriInfo.getQueryParameters().getFirst(
 							"type"));
 			Query query = messageType.getFindByGuidQuery(entityManagerData, messageId);
-			List<? extends SpecificViewAbstract> results = query.getResultList();
+			List<? extends MtView> results = query.getResultList();
 			if(!results.isEmpty()){
 				viewEntity = results.get(0);
 			}

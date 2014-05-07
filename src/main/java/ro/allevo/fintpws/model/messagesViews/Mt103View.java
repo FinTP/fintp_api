@@ -37,7 +37,7 @@ import org.codehaus.jettison.json.JSONObject;
  *          view.
  */
 @Entity
-public class Mt103View extends SpecificViewAbstract implements Serializable{
+public class Mt103View extends MtView implements Serializable{
 
 	/**
 	 * 

@@ -39,7 +39,7 @@ import ro.allevo.fintpws.util.ResourcesUtils;
  *          MTFITOFICSTMRCDTTRFVIEW database view.
  */
 @Entity
-public class MtFitoficstmrcdttrfView extends  SpecificViewAbstract  implements Serializable{
+public class MtFitoficstmrcdttrfView extends  MtView  implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private BigDecimal amount;

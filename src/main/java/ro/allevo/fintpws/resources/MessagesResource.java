@@ -52,7 +52,7 @@ import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.model.EntryQueueEntity;
 import ro.allevo.fintpws.model.QueueEntity;
 import ro.allevo.fintpws.model.RoutedMessageEntity;
-import ro.allevo.fintpws.model.messagesViews.SpecificViewAbstract;
+import ro.allevo.fintpws.model.messagesViews.MtView;
 import ro.allevo.fintpws.model.messagesViews.MessageTypeToViewsEnum;
 import ro.allevo.fintpws.security.RolesUtils;
 import ro.allevo.fintpws.util.JsonResponseWrapper;
@@ -390,7 +390,7 @@ public class MessagesResource extends PagedCollection {
 
 		if (items.size() > 0) {
 			if (isDisplayFeatureRequested) {
-				for (SpecificViewAbstract messageEntity : (List<? extends SpecificViewAbstract>) items) {
+				for (MtView messageEntity : (List<? extends MtView>) items) {
 					messagesArray.put(messageEntity.toJSON());
 				}
 			} else {

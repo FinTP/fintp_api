@@ -1,3 +1,23 @@
+/*
+ * FinTP - Financial Transactions Processing Application
+ * Copyright (C) 2013 Business Information Systems (Allevo) S.R.L.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ * or contact Allevo at : 031281 Bucuresti, 23C Calea Vitan, Romania,
+ * phone +40212554577, office@allevo.ro <mailto:office@allevo.ro>, www.allevo.ro.
+ */
+
 package ro.allevo.fintpws.model;
 
 import java.io.Serializable;
@@ -6,63 +26,61 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.math.BigDecimal;
 
-
 /**
  * The persistent class for the batchjobs database table.
  * 
  */
 @Entity
-@Table(schema="FINDATA", name="BATCHJOBS")
+@Table(schema = "FINDATA", name = "BATCHJOBS")
 @NamedQueries({
-	@NamedQuery(name = "BatchJobEntity.findByGuid", query = "SELECT r FROM BatchJobEntity r "
-			+ "WHERE r.combatchid=:id"),
-	@NamedQuery(name = "BatchJobEntity.findByBatchID", query = "SELECT r FROM BatchJobEntity r "
-			+ "WHERE r.batchuid=:id"),
-	@NamedQuery(name = "BatchJobEntity.findAll", query = "SELECT r FROM BatchJobEntity r ORDER BY r.combatchid asc"),
-	@NamedQuery(name = "BatchJobEntity.findTotal", query = "SELECT count(r.combatchid) FROM BatchJobEntity r")
-})
+		@NamedQuery(name = "BatchJobEntity.findByGuid", query = "SELECT r FROM BatchJobEntity r "
+				+ "WHERE r.combatchid=:id"),
+		@NamedQuery(name = "BatchJobEntity.findByBatchID", query = "SELECT r FROM BatchJobEntity r "
+				+ "WHERE r.batchuid=:id"),
+		@NamedQuery(name = "BatchJobEntity.findAll", query = "SELECT r FROM BatchJobEntity r ORDER BY r.combatchid asc"),
+		@NamedQuery(name = "BatchJobEntity.findTotal", query = "SELECT count(r.combatchid) FROM BatchJobEntity r") })
 @Cacheable(false)
 public class BatchJobEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(unique=true, nullable=false, length=35)
+	@Column(unique = true, nullable = false, length = 35)
 	private String combatchid;
 
-	@Column(nullable=false, length=20)
+	@Column(nullable = false, length = 20)
 	private String batchamount;
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	private Integer batchcount;
 
-	@Column(nullable=false, length=16)
+	@Column(nullable = false, length = 16)
 	private String batchid;
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	private Integer batchstatus;
 
-	@Column(length=50)
+	@Column(length = 50)
 	private String batchtype;
 
-	@Column(length=32)
+	@Column(length = 32)
 	private String batchuid;
 
-	@Column(precision=20, scale=2)
+	@Column(precision = 20, scale = 2)
 	private BigDecimal combatchamt;
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	private Integer defjobcount;
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	private Timestamp insertdate;
 
-	@Column(length=500)
+	@Column(length = 500)
 	private String reason;
 
-	@Column(nullable=false, length=50)
+	@Column(nullable = false, length = 50)
 	private String routingpoint;
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	private Integer userid;
 
 	public BatchJobEntity() {
