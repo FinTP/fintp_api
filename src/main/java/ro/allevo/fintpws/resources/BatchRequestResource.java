@@ -166,10 +166,9 @@ public class BatchRequestResource {
 				BatchRequestResource.class);
 		JSONArray comBatchIds = new JSONArray();
 		ArrayList<String> usedBatchUids = new ArrayList<>();
-		float processedCount = 0;
-		float totalCount = 0;
+		int processedCount = 0;
+		int totalCount = 0;
 		boolean inProgress = false;
-		int countNew = 0, countInProgress = 0, countReady = 0, countFailed = 0, countSuccess = 0;
 		
 		for (BatchRequestEntity batchRequestEntity : batchRequestEntities) {
 			String batchUid = batchRequestEntity.getBatchuid();
@@ -182,52 +181,46 @@ public class BatchRequestResource {
 			for (BatchJobEntity batch : batches) {
 				processedCount += batch.getDefjobcount();
 				totalCount += batch.getBatchcount();
-				if(!usedBatchUids.contains(batch.getCombatchid())){
-					comBatchIds.put(batch.getCombatchid());
-					usedBatchUids.add(batch.getCombatchid());
-				}
+				
 				if (batch.getBatchstatus() < 20) {
 					inProgress = true;
 				}
+				int percentage = batch.getDefjobcount() * 100/ batch.getBatchcount();
 				
+				JSONObject batchJSON = new JSONObject();
 				BatchStatus status = BatchStatus.fromInteger(batch.getBatchstatus()); 
-				switch (status) {
-				case FAILED:
-					countFailed++;
-					break;
-				case NEW:
-					countNew++;
-					break;
-				case IN_PROGRESS:
-					countInProgress++;
-					break;
-				case READY:
-					countReady++;
-					break;
-				case SUCCESS:
-					countSuccess++;
-					break;
+				batchJSON.put("id", batch.getCombatchid());
+				batchJSON.put("status", status.name());
+				batchJSON.put("progress", percentage);
+				if(!usedBatchUids.contains(batch.getCombatchid())){
+					comBatchIds.put(batchJSON);
+					usedBatchUids.add(batch.getCombatchid());
 				}
 			}
 		}
 		
-		
+		if(comBatchIds.length() == 0){
+			JSONObject entity = new JSONObject()
+			.put("code", 202)
+			.put("progress", 0)
+			.put("nb_batches", batchRequestEntities.size());
+			
+			return Response.status(Status.ACCEPTED).entity(entity).build();
+		}
 		if (inProgress) {
-			float percentage = processedCount / totalCount * 100;
+			int percentage = processedCount * 100/ totalCount;
 			JSONObject entity = new JSONObject()
 				.put("code", 202)
 				.put("progress", percentage)
-				.put("batch_ids", comBatchIds)
-				.put("done", countSuccess)
-				.put("failed", countFailed)
-				.put("ready", countReady)
-				.put("in progress", countInProgress)
-				.put("new", countNew);
+				.put("batches", comBatchIds)
+				.put("nb_batches", batchRequestEntities.size());
 			return Response.status(Status.ACCEPTED).entity(entity).build();
 		}
 
-		requestAsJson.put("groupkey", groupKey);
-		requestAsJson.put("batch_ids", comBatchIds);
+		requestAsJson.put("groupkey", groupKey)
+			.put("batches", comBatchIds)
+			.put("nb_batches", batchRequestEntities.size());
+		
 		return Response.status(Status.CREATED).entity(requestAsJson).build();
 	}
 	
