@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
-import javax.persistence.RollbackException;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
@@ -34,7 +33,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -45,13 +43,15 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.eclipse.persistence.exceptions.DatabaseException;
-import org.postgresql.util.PSQLException;
 
 import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.model.UserEntity;
 import ro.allevo.fintpws.util.JsonResponseWrapper;
-
+/**
+ * Resource class implementing /batchrequests path methods
+ * @author remus
+ *
+ */
 public class BatchRequestsResource {
 	
 	/**

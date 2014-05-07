@@ -161,11 +161,6 @@ public class MessageResource {
 	private QueueEntity queueEntity = null;
 	
 	/**
-	 * Field isView
-	 */
-	private boolean isView = false;
-	
-	/**
 	 * Creates a new instance of MessageResource
 	 * 
 	 * @param uriInfo
@@ -197,6 +192,7 @@ public class MessageResource {
 					.getMessageType(uriInfo.getQueryParameters().getFirst(
 							"type"));
 			Query query = messageType.getFindByGuidQuery(entityManagerData, messageId);
+			@SuppressWarnings("unchecked")
 			List<? extends MtView> results = query.getResultList();
 			if(!results.isEmpty()){
 				viewEntity = results.get(0);

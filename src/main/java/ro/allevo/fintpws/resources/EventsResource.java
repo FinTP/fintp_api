@@ -22,7 +22,6 @@ package ro.allevo.fintpws.resources;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.ParseException;
 import java.util.List;
 

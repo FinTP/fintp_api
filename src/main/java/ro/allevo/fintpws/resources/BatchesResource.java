@@ -41,6 +41,12 @@ import org.codehaus.jettison.json.JSONObject;
 import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.model.BatchJobEntity;
 
+/**
+ * Resource class implementing /batchres path methods
+ * 
+ * @author remus
+ *
+ */
 public class BatchesResource extends PagedCollection{
 
 	/**

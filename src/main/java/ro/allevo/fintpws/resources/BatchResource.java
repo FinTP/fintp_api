@@ -38,7 +38,7 @@ import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.model.BatchJobEntity;
 
 /**
- * 
+ * Resource class implementing /batchrequests path methods
  * @author remus
  * @version $Revision: 1.0 $
  */
