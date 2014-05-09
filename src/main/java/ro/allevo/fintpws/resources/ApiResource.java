@@ -340,6 +340,16 @@ public class ApiResource {
 		return new BatchRequestsResource(uriInfo, emd);
 	}
 	
+	/**
+	 * Sub-resource locator for /routereuests resource
+	 * 
+	 * @return RouteActionResource
+	 */
+	@Path("routerequests")
+	public RouteActionResource getRouteRequests(){
+		return new RouteActionResource();
+	}
+	
 
 
 	@GET
