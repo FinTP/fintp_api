@@ -234,7 +234,7 @@ public class RoutingJobResource {
 			}
 			if (jsonEntity.has("userid")) {
 				routingJobEntity.setUserid(jsonEntity
-						.getString("userid"));
+						.getInt("userid"));
 			}
 			
 			entityManagerData.getTransaction().begin();

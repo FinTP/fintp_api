@@ -62,7 +62,7 @@ public class RoutingJobEntity implements Serializable {
 	private BigDecimal status;
 
 	@Column(length=5)
-	private String userid;
+	private long userid;
 
 	public RoutingJobEntity() {
 	}
@@ -115,11 +115,11 @@ public class RoutingJobEntity implements Serializable {
 		this.status = status;
 	}
 
-	public String getUserid() {
+	public long getUserid() {
 		return this.userid;
 	}
 
-	public void setUserid(String userid) {
+	public void setUserid(long userid) {
 		this.userid = userid;
 	}
 

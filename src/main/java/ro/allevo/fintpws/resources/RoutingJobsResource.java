@@ -172,7 +172,7 @@ public class RoutingJobsResource extends PagedCollection {
 		
 			//Fill optional data
 			routingJobEntity.setRoutingpoint(jsonEntity.optString("routingpoint"));
-			routingJobEntity.setUserid(jsonEntity.optString("userid"));
+			routingJobEntity.setUserid(jsonEntity.optInt("userid"));
 					
 			entityManagerData.getTransaction().begin();
 			entityManagerData.persist(routingJobEntity);
