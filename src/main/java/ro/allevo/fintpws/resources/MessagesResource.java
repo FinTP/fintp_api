@@ -48,6 +48,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
 
+import com.sun.grizzly.util.buf.UEncoder;
+
 import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.model.EntryQueueEntity;
 import ro.allevo.fintpws.model.QueueEntity;
@@ -178,7 +180,7 @@ public class MessagesResource extends PagedCollection {
 					atArgument));
 			
 			if(null != queueEntity){
-				this.isMessageInQueue = false;
+				this.isMessageInQueue = true;
 			}
 
 		} else {
