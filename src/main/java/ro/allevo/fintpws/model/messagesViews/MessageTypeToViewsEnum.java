@@ -38,7 +38,13 @@ public enum MessageTypeToViewsEnum {
 	MT_103("103", Mt103View.class), 
 	MT_202("202", Mt202View.class),
 	MT_FITOFICSTMRCDTTRF("fitoficstmrcdttrf", MtFitoficstmrcdttrfView.class),
-	MT_COREBLKLRGRMTCDTTRF("coreblklrgrmtcdttrf", MtCoreblklrgrmtcdttrfView.class);
+	MT_COREBLKLRGRMTCDTTRF("coreblklrgrmtcdttrf", MtCoreblklrgrmtcdttrfView.class),
+	MT_PN("pn", MtPnView.class),
+	MT_RPN("rpn", MtRpnView.class),
+	MT_BE("be", MtBeView.class),
+	MT_RBE("rbe", MtRbeView.class),
+	MT_CQ("cq", MtCqView.class),
+	MT_RCQ("rcq", MtRcqView.class);
 	
 	
 	private String type;
