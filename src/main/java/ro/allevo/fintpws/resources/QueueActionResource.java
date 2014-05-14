@@ -227,9 +227,9 @@ public class QueueActionResource {
 				queueActionEntity.setGroupmsg(new BigDecimal(jsonEntity
 						.optInt("groupmsg")));
 			}
-			if (jsonEntity.has("optionvalues")) {
-				queueActionEntity.setOptionvalues(jsonEntity
-						.optString("optionvalues"));
+			if (jsonEntity.has("addoptions")) {
+				queueActionEntity.setAddoptions(jsonEntity
+						.optInt("addoptions"));
 			}
 			
 			if(jsonEntity.has("currmsg")){
@@ -311,7 +311,7 @@ public class QueueActionResource {
 				.put("currmsg", queueActionEntity.getCurrmsg())
 				.put("selmsg", queueActionEntity.getSelmsg())
 				.put("groupmsg", queueActionEntity.getGroupmsg())
-				.put("optionvalues", queueActionEntity.getOptionvalues());
+				.put("addoptions", queueActionEntity.getAddoptions());
 
 		return queueActionAsJson;
 	}
