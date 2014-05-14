@@ -174,7 +174,7 @@ public class QueueActionsResource extends PagedCollection {
 			queueActionEntity.setDescription(jsonEntity.optString("description"));
 			queueActionEntity.setSelmsg(new BigDecimal (jsonEntity.optInt("selmsg")));
 			queueActionEntity.setGroupmsg(new BigDecimal (jsonEntity.optInt("groupmsg")));
-			queueActionEntity.setOptionvalues(jsonEntity.optString("optionvalues"));
+			queueActionEntity.setAddoptions(jsonEntity.optInt("addoptions"));
 			queueActionEntity.setCurrmsg(new BigDecimal(jsonEntity.optInt("currmsg")));
 			
 			entityManagerConfig.getTransaction().begin();

@@ -55,8 +55,8 @@ public class QueueActionEntity implements Serializable {
 	@Column(precision = 22)
 	private BigDecimal groupmsg;
 
-	@Column(length = 50)
-	private String optionvalues;
+	@Column
+	private long addoptions;
 
 	@Column(precision = 22)
 	private BigDecimal selmsg;
@@ -99,13 +99,6 @@ public class QueueActionEntity implements Serializable {
 		this.groupmsg = groupmsg;
 	}
 
-	public String getOptionvalues() {
-		return this.optionvalues;
-	}
-
-	public void setOptionvalues(String optionvalues) {
-		this.optionvalues = optionvalues;
-	}
 
 	public BigDecimal getSelmsg() {
 		return this.selmsg;
@@ -128,6 +121,14 @@ public class QueueActionEntity implements Serializable {
 
 	public void setCurrmsg(BigDecimal currmsg) {
 		this.currmsg = currmsg;
+	}
+
+	public long getAddoptions() {
+		return addoptions;
+	}
+
+	public void setAddoptions(long addoptions) {
+		this.addoptions = addoptions;
 	}
 
 }
