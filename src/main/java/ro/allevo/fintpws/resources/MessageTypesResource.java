@@ -120,9 +120,15 @@ public class MessageTypesResource extends PagedCollection {
 		JSONObject messageTypesAsJson = super.asJson();
 
 		// fill data
-		List<?> items = getItems();
-
+		List<String> items = (List<String>) getItems();
+		System.out.println("Message types: " + items);
+		
+		
 		if (items.size() > 0) {
+			//mark messages without type as undefined 
+			if(items.contains(null)){
+				items.set(items.indexOf(null), "undefined");
+			}
 			messageTypesAsJson.put("messagetypes", (List<String>) items);
 		}
 

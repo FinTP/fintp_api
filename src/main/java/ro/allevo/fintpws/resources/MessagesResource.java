@@ -178,7 +178,7 @@ public class MessagesResource extends PagedCollection {
 					atArgument));
 			
 			if(null != queueEntity){
-				this.isMessageInQueue = false;
+				this.isMessageInQueue = true;
 			}
 
 		} else {

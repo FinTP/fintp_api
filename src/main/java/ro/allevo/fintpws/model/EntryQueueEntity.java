@@ -38,9 +38,9 @@ import java.math.BigDecimal;
 		@NamedQuery(name = "EntryQueueEntity.findTotalQueue", query = "SELECT count(b) FROM EntryQueueEntity b "
 				+ "WHERE b.queuename=:queuename"),
 		@NamedQuery(name = "EntryQueueEntity.findDistinctMessagesQueue", query = "SELECT distinct r.msgtype FROM EntryQueueEntity b "
-				+ " join b.routedmessage r where b.queuename= :queuename"),
+				+ " left join b.routedmessage r where b.queuename= :queuename"),
 		@NamedQuery(name = "EntryQueueEntity.findTotalDistinctMessagesQueue", query = "SELECT count(distinct r.msgtype)   FROM EntryQueueEntity b "
-				+ " join b.routedmessage r where b.queuename= :queuename"),
+				+ " left join b.routedmessage r where b.queuename= :queuename"),
 		@NamedQuery(name = "EntryQueueEntity.findGroupMessagesQueue", query = "SELECT distinct r.msgtype FROM EntryQueueEntity b "
 				+ " join b.routedmessage r where b.queuename= :queuename") })
 

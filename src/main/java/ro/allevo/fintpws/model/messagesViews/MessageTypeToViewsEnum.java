@@ -44,7 +44,8 @@ public enum MessageTypeToViewsEnum {
 	MT_BE("be", MtBeView.class),
 	MT_RBE("rbe", MtRbeView.class),
 	MT_CQ("cq", MtCqView.class),
-	MT_RCQ("rcq", MtRcqView.class);
+	MT_RCQ("rcq", MtRcqView.class),
+	MT_UNDEFINED("undefined", MtUndefinedView.class);
 	
 	
 	private String type;
