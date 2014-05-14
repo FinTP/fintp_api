@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 	<persistence-unit name="fintpCFG">
+		<non-jta-data-source>java:comp/env/jdbc/toFintpConfig</non-jta-data-source>
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+		
 <!-- 		<properties> -->
 <!-- 			<property name="eclipselink.weaving.eager" value="true"/> -->
 <!-- 	        <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/> -->
@@ -10,16 +12,17 @@
 <!-- 	        <property name="javax.persistence.jdbc.password" value="fincfg"/> -->
 <!-- 	        <property name="eclipselink.logging.level" value="INFO"/> -->
 <!-- 	      </properties> -->
-	     <properties>
-	        <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-	        <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://193.1.1.208:5432/pgdev"/>
-	        <property name="javax.persistence.jdbc.user" value="finuiuser"/>
-	        <property name="javax.persistence.jdbc.password" value="fincfg"/>
-	        <property name="javax.persistence.logging.level" value="INFO"/>
-	    </properties>
+<!-- 	     <properties> -->
+<!-- 	        <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/> -->
+<!-- 	        <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://193.1.1.165:5432/fintpce"/> -->
+<!-- 	        <property name="javax.persistence.jdbc.user" value="finuiuser"/> -->
+<!-- 	        <property name="javax.persistence.jdbc.password" value="fincfg"/> -->
+<!-- 	        <property name="javax.persistence.logging.level" value="FINEST"/> -->
+<!-- 	    </properties> -->
 	    
 	</persistence-unit>
 	<persistence-unit name="fintpDATA">
+		 <non-jta-data-source>java:comp/env/jdbc/toFintpData</non-jta-data-source>
 		 <exclude-unlisted-classes>false</exclude-unlisted-classes>
 <!-- 		 <properties> -->
 <!-- 			<property name="eclipselink.weaving.eager" value="true"/> -->
@@ -29,12 +32,12 @@
 <!-- 	        <property name="javax.persistence.jdbc.password" value="findata"/> -->
 <!-- 	        <property name="eclipselink.logging.level" value="INFO"/> -->
 <!-- 		</properties> -->
-		<properties>
-	        <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-	        <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://193.1.1.208:5432/pgdev"/>
-	        <property name="javax.persistence.jdbc.user" value="finuiuser"/>
-	        <property name="javax.persistence.jdbc.password" value="findata"/>
-	        <property name="javax.persistence.logging.level" value="INFO"/>
-	    </properties>
+<!-- 		<properties> -->
+<!-- 	        <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/> -->
+<!-- 	        <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://193.1.1.165:5432/fintpce"/> -->
+<!-- 	        <property name="javax.persistence.jdbc.user" value="finuiuser"/> -->
+<!-- 	        <property name="javax.persistence.jdbc.password" value="findata"/> -->
+<!-- 	        <property name="javax.persistence.logging.level" value="FINEST"/> -->
+<!-- 	    </properties> -->
 	</persistence-unit>
 </persistence>
