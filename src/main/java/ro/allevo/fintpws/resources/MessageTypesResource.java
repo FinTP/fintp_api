@@ -30,6 +30,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
@@ -130,6 +131,8 @@ public class MessageTypesResource extends PagedCollection {
 				items.set(items.indexOf(null), "undefined");
 			}
 			messageTypesAsJson.put("messagetypes", (List<String>) items);
+		}else{
+			messageTypesAsJson.put("messagetype", new JSONArray());
 		}
 
 		return messageTypesAsJson;
