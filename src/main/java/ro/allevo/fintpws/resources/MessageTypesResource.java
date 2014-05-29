@@ -132,7 +132,7 @@ public class MessageTypesResource extends PagedCollection {
 			}
 			messageTypesAsJson.put("messagetypes", (List<String>) items);
 		}else{
-			messageTypesAsJson.put("messagetype", new JSONArray());
+			messageTypesAsJson.put("messagetypes", new JSONArray());
 		}
 
 		return messageTypesAsJson;
