@@ -182,11 +182,6 @@ public class RoutingRulesResource extends PagedCollection {
 
 			// RoutingRule
 
-			// fill required data
-			if (jsonEntity.has("guid")) {
-				routingRuleEntity.setGuid(new Long(jsonEntity.getString("guid")).longValue());
-			}
-
 			try {
 				QueueEntity queueEntity = QueueResource
 						.findByName(entityManagerConfig,
