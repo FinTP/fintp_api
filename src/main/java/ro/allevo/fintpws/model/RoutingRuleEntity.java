@@ -35,10 +35,10 @@ import java.math.BigDecimal;
 @NamedQueries({
 	@NamedQuery(name = "RoutingRuleEntity.findByGuid", query = "SELECT r FROM RoutingRuleEntity r "
 			+ "WHERE r.guid=:guid"),
-	@NamedQuery(name = "RoutingRuleEntity.findAll", query = "SELECT r FROM RoutingRuleEntity r ORDER BY r.guid asc"),
+	@NamedQuery(name = "RoutingRuleEntity.findAll", query = "SELECT r FROM RoutingRuleEntity r ORDER BY r.sequence asc"),
 	@NamedQuery(name = "RoutingRuleEntity.findTotal", query = "SELECT count(r.guid) FROM RoutingRuleEntity r"),
 	@NamedQuery(name = "RoutingRuleEntity.findAllRoutingSchema", query = "SELECT r FROM RoutingRuleEntity r " +
-			"WHERE r.schemaguid=:schemaguid ORDER BY r.guid asc"),
+			"WHERE r.schemaguid=:schemaguid ORDER BY r.sequence asc"),
 	@NamedQuery(name = "RoutingRuleEntity.findTotalRoutingSchema", query = "SELECT count(r.guid) FROM RoutingRuleEntity r "+
 			"WHERE r.schemaguid=:schemaguid")
 	

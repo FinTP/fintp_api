@@ -36,7 +36,7 @@ import java.util.List;
 @NamedQueries({
 		@NamedQuery(name = "QueueEntity.findAll", query = "select q from QueueEntity q order by q.name asc"),
 		@NamedQuery(name = "QueueEntity.findTotal", query = "select count(q.name) from QueueEntity q"),
-		@NamedQuery(name = "QueueEntity.findByName", query = "select q from QueueEntity q where trim(q.name)=:name")
+		@NamedQuery(name = "QueueEntity.findByName", query = "select q from QueueEntity q where trim(q.name)=:name order by q.name asc")
 		 })
 public class QueueEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
