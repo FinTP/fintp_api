@@ -1289,17 +1289,17 @@ The Basic Authentication header is sent with each HTTP request, therefore the br
 
 ###Authorization
 
-On most resources (all except messages and their relationships containing messages) the authorization rules are following:
+On most resources (all resources except messages and their relationships containing messages) the authorization rules are following:
 
- GET method is allowed to be called by any authenticated user
- POST, PUT, DELETE are allowed to be called only by users having “Administrator” role
+* GET method is allowed to be called by any authenticated user
+* POST, PUT, DELETE are allowed to be called only by users having “Administrator” role
 
 On messages resource and other relations including messages (e.g. /messages/{id}/events), the following rules take place:
 
- On routed messages (that don’t belong to any queue) the user must have “Reports” role in order to access messages
- On other messages (belonging to a specific queue) access is granted this way (considering the message belongs is in {queue}):
-  GET method is allowed if the current user has a role which is mapped to {queue} with “READ”  action type
-  POST, PUT, DELETE methods are allowed if the current user has a role which is mapped to {queue} with “WRITE”  action type
+ On routed messages (with URI /api/messages) the user must have “Reports” role in order to access messages
+ On other messages (belonging to a specific queue) access is granted this way (considering the message belongs is in {queue}; URI api/{queue}/messages):
+* GET method is allowed if the current user has at least a role which is mapped to {queue} with “READ”  action type
+* POST, PUT, DELETE methods are allowed if the current user has a role which is mapped to {queue} with “WRITE”  action type
 
 ##7.	API usage scenarios
 
