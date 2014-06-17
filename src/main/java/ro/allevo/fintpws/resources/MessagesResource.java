@@ -284,11 +284,13 @@ public class MessagesResource extends PagedCollection {
 		// authorization
 		if (isMessageInQueue) {
 			if (!RolesUtils.hasWriteAuthorityOnQueue(queueEntity)) {
-				throw new AccessDeniedException("forbidden");
+				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+						Status.FORBIDDEN.getStatusCode());
 			}
 		} else {
 			if (!RolesUtils.hasReportsRole()) {
-				throw new AccessDeniedException("forbidden");
+				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+						Status.FORBIDDEN.getStatusCode());
 			}
 		}
 		EntryQueueEntity entryQueueEntity = new EntryQueueEntity();
