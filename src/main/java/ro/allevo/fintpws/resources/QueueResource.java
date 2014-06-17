@@ -77,6 +77,10 @@ public class QueueResource {
 	 */
 	static final String ERROR_MESSAGE_PUT_QUEUE = "Error updating queue : ";
 	/**
+	 * Field ERROR_MESSAGE_DELETE_QUEUE. (value is ""Error deleting queue : "")
+	 */
+	static final String ERROR_MESSAGE_DELETE_QUEUE = "Error deleting queue : ";
+	/**
 	 * Field ERROR_MESSAGE_Q_NOT_FOUND. (value is ""Queue with name [%s] not
 	 * found"")
 	 */
@@ -98,6 +102,8 @@ public class QueueResource {
 	 * Field ERROR_REASON_ROLLBACK. (value is ""rollback"")
 	 */
 	static final String ERROR_REASON_ROLLBACK = "rollback";
+	
+	
 
 	// actual uri info provided by parent resource
 	/**
@@ -417,7 +423,10 @@ public class QueueResource {
 			entityManagerConfig.getTransaction().begin();
 			entityManagerConfig.remove(queueEntity);
 			entityManagerConfig.getTransaction().commit();
-		} finally {
+		} catch(RollbackException re){
+			ApplicationJsonException.handleSQLException(re,
+					ERROR_MESSAGE_DELETE_QUEUE, logger);
+		}finally {
 			if (null != entityManagerConfig) {
 				entityManagerConfig.close();
 			}
