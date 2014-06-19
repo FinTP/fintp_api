@@ -36,6 +36,8 @@ import javax.persistence.Query;
 public enum MessageTypeToViewsEnum {
 
 	MT_103("103", Mt103View.class), 
+	MT_104("104", Mt104View.class),
+	MT_104R("104r", Mt104rView.class),
 	MT_202("202", Mt202View.class),
 	MT_FITOFICSTMRCDTTRF("fitoficstmrcdttrf", MtFitoficstmrcdttrfView.class),
 	MT_COREBLKLRGRMTCDTTRF("coreblklrgrmtcdttrf", MtCoreblklrgrmtcdttrfView.class),
