@@ -122,7 +122,7 @@ public class JpaFilter {
 
 	private List<Filter> getFilterFileds(Root<?> queryRoot) {
 		List<Filter> entityFilterFileds = new ArrayList<Filter>();
-		Filter filter = new Filter();
+		
 
 		MultivaluedMap<String, String> queryParameters = uriInfo
 				.getQueryParameters();
@@ -131,6 +131,7 @@ public class JpaFilter {
 
 		for (String filterFiled : queryParameters.keySet()) {
 			if (filterFiled.startsWith(FILTER)) {
+				Filter filter = new Filter();
 				String[] filedValues = filterFiled.split("_");
 				try {
 					filterName = filedValues.length > 1 ? filedValues[1] : null;
