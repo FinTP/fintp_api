@@ -1301,6 +1301,12 @@ On messages resource and other relations including messages (e.g. /messages/{id}
 * GET method is allowed if the current user has at least a role which is mapped to {queue} with “READ”  action type
 * POST, PUT, DELETE methods are allowed if the current user has a role which is mapped to {queue} with “WRITE”  action type
 
+###Password Encryption
+
+The passwords are encrypted using an implementation that uses SHA-256 hashing with 1024 iterations and a random 8-byte random salt value. 
+The digest algorithm is invoked on the concatenated bytes of the salt and password.
+The digest algorithm, number of iterations and salt length can be configured in the security contex file.
+
 ##7.	API usage scenarios
 
 Queues screen
