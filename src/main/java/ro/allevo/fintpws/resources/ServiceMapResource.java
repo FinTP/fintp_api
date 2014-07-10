@@ -251,22 +251,31 @@ public class ServiceMapResource {
 				serviceMapEntity.setDuplicatecheck(new BigDecimal(jsonEntity
 						.optInt("duplicatecheck")));
 			}
-			if (jsonEntity.has("duplicateq")) {
+			if (jsonEntity.has("duplicateq") && !jsonEntity.optString("duplicateq").equals("") ) {
 				serviceMapEntity.setDuplicateq(jsonEntity
 						.optString("duplicateq"));
 			}
+			else
+				serviceMapEntity.setDuplicateq(null);
+			
 			if (jsonEntity.has("duplicatemap")) {
 				serviceMapEntity.setDuplicatemap(jsonEntity
 						.optString("duplicatemap"));
 			}
-			if (jsonEntity.has("delayednotifq")) {
+			if (jsonEntity.has("delayednotifq") && !jsonEntity.optString("delayednotifq").equals("")) {
 				serviceMapEntity.setDelayednotifq(jsonEntity
 						.optString("delayednotifq"));
 			}
-			if (jsonEntity.has("duplicatenotifq")) {
+			else
+				serviceMapEntity.setDelayednotifq(null);
+			
+			if (jsonEntity.has("duplicatenotifq")&& !jsonEntity.optString("duplicatenotifq").equals("")) {
 				serviceMapEntity.setDuplicatenotifq(jsonEntity
 						.optString("duplicatenotifq"));
 			}
+			else
+				serviceMapEntity.setDuplicatenotifq(null);
+			
 
 			entityManagerConfig.getTransaction().begin();
 			entityManagerConfig.merge(serviceMapEntity);

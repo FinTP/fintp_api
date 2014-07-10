@@ -280,6 +280,7 @@ public class RoutingRulesResource extends PagedCollection {
 			}
 		}
 		routingRulesAsJson.put("routingrules", routingRulesArray);
+		
 		return routingRulesAsJson;
 	}
 }
