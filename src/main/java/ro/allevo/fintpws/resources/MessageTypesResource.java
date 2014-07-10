@@ -1,22 +1,22 @@
 /*
-* FinTP - Financial Transactions Processing Application
-* Copyright (C) 2013 Business Information Systems (Allevo) S.R.L.
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>
-* or contact Allevo at : 031281 Bucuresti, 23C Calea Vitan, Romania,
-* phone +40212554577, office@allevo.ro <mailto:office@allevo.ro>, www.allevo.ro.
-*/
+ * FinTP - Financial Transactions Processing Application
+ * Copyright (C) 2013 Business Information Systems (Allevo) S.R.L.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ * or contact Allevo at : 031281 Bucuresti, 23C Calea Vitan, Romania,
+ * phone +40212554577, office@allevo.ro <mailto:office@allevo.ro>, www.allevo.ro.
+ */
 package ro.allevo.fintpws.resources;
 
 import java.util.List;
@@ -26,8 +26,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,8 +36,11 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
 
+import ro.allevo.claudiu.CurrencyEntity;
+import ro.allevo.claudiu.CurrencyResource;
 import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.model.EntryQueueEntity;
+import ro.allevo.fintpws.model.MsgTypeListEntity;
 import ro.allevo.fintpws.model.QueueEntity;
 import ro.allevo.fintpws.security.RolesUtils;
 
@@ -64,6 +67,9 @@ public class MessageTypesResource extends PagedCollection {
 
 	private QueueEntity queueEntity = null;
 
+	private MsgTypeListEntity msgEntity = null;
+
+
 	/**
 	 * Creates a new instance of MessagesResource
 	 * 
@@ -81,10 +87,10 @@ public class MessageTypesResource extends PagedCollection {
 			QueueEntity queueEntity) {
 		super(uriInfo, entityManagerData.createNamedQuery(
 				"EntryQueueEntity.findDistinctMessagesQueue",
-				EntryQueueEntity.class).setParameter("queuename",
-				queueEntity.getName()), entityManagerData.createNamedQuery(
-				"EntryQueueEntity.findTotalDistinctMessagesQueue", Long.class)
-				.setParameter("queuename", queueEntity.getName()));
+				MsgTypeListEntity.class).setParameter("queuename",
+						queueEntity.getName()), entityManagerData.createNamedQuery(
+								"EntryQueueEntity.findTotalDistinctMessagesQueue", Long.class)
+								.setParameter("queuename", queueEntity.getName()));
 		this.queueEntity = queueEntity;
 	}
 
@@ -98,13 +104,13 @@ public class MessageTypesResource extends PagedCollection {
 	public JSONObject getMessagesAsJson() {
 		// authorization
 		if (!RolesUtils.hasReadAuthorityOnQueue(queueEntity)) {
-			throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
-					Status.FORBIDDEN.getStatusCode());
+			throw new AccessDeniedException("forbidden");
 		}
 
 		try {
 			getPage();
 			return asJson();
+			//return MessageTypesResource.asJson(msgtyoelistentity, uriInfo.getPath());
 		} catch (JSONException je) {
 			logger.error(ERROR_MESSAGE_GET_MESSAGETYPES + ERROR_REASON_JSON, je);
 			throw new ApplicationJsonException(je, ERROR_MESSAGE_GET_MESSAGETYPES
@@ -120,23 +126,37 @@ public class MessageTypesResource extends PagedCollection {
 	 */
 	@SuppressWarnings("unchecked")
 	public JSONObject asJson() throws JSONException {
-		JSONObject messageTypesAsJson = super.asJson();
-
+		final JSONObject messageTypesAsJson = super.asJson();
+		final JSONArray jsonArray = new JSONArray();
 		// fill data
-		List<String> items = (List<String>) getItems();
-		System.out.println("Message types: " + items);
-		
-		
+
+		List<MsgTypeListEntity> items = (List<MsgTypeListEntity>) getItems();
+		/*System.out.println("Message types: " + items);*/
+
 		if (items.size() > 0) {
-			//mark messages without type as undefined 
-			if(items.contains(null)){
-				items.set(items.indexOf(null), "undefined");
+
+			for(MsgTypeListEntity messagetype : items){
+				JSONObject msgtypeasJson = super.asJson();
+				msgtypeasJson.put("messagetype" , messagetype.getMessagetype());
+				msgtypeasJson.put("friendlyname" , messagetype.getFriendlyname());
+				msgtypeasJson.put("storage" , messagetype.getStorage());
+				msgtypeasJson.put("businessarea" , messagetype.getBusinessarea());
+				msgtypeasJson.put("reportingstorage" , messagetype.getReportingstorage());
+				msgtypeasJson.put("parentmsgtype" , messagetype.getParentmsgtype());
+
+				jsonArray.put(msgtypeasJson);
 			}
-			messageTypesAsJson.put("messagetypes", (List<String>) items);
+
+			//mark messages without type as undefined 
+			/*if(items.contains(null)){
+				items.set(items.indexOf(null), "undefined");
+			}*/
+			messageTypesAsJson.put("messagetypes", jsonArray);
 		}else{
 			messageTypesAsJson.put("messagetypes", new JSONArray());
 		}
 
 		return messageTypesAsJson;
 	}
+
 }

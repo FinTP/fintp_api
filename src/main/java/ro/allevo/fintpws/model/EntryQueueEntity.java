@@ -37,8 +37,8 @@ import java.math.BigDecimal;
 				+ "WHERE trim(b.guid) = :guid"),
 		@NamedQuery(name = "EntryQueueEntity.findTotalQueue", query = "SELECT count(b) FROM EntryQueueEntity b "
 				+ "WHERE b.queuename=:queuename"),
-		@NamedQuery(name = "EntryQueueEntity.findDistinctMessagesQueue", query = "SELECT distinct r.msgtype FROM EntryQueueEntity b "
-				+ " left join b.routedmessage r where b.queuename= :queuename"),
+		@NamedQuery(name = "EntryQueueEntity.findDistinctMessagesQueue", query = "SELECT distinct m FROM EntryQueueEntity b, MsgTypeListEntity m "
+				+ " left join b.routedmessage r where b.queuename= :queuename and r.msgtype = m.messagetype"),
 		@NamedQuery(name = "EntryQueueEntity.findTotalDistinctMessagesQueue", query = "SELECT count(distinct r.msgtype)   FROM EntryQueueEntity b "
 				+ " left join b.routedmessage r where b.queuename= :queuename"),
 		@NamedQuery(name = "EntryQueueEntity.findGroupMessagesQueue", query = "SELECT distinct r.msgtype FROM EntryQueueEntity b "
@@ -91,11 +91,14 @@ public class EntryQueueEntity implements Serializable {
 	@OneToOne(targetEntity = RoutedMessageEntity.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CORRELATIONID", referencedColumnName = "CORRELATIONID", insertable = false, updatable = false)
 	private RoutedMessageEntity routedmessage;
+	
 
 	public RoutedMessageEntity getRoutedmessage() {
 		return routedmessage;
 	}
+	
 
+	
 	public void setRoutedmessage(RoutedMessageEntity routedmessage) {
 		this.routedmessage = routedmessage;
 	}
