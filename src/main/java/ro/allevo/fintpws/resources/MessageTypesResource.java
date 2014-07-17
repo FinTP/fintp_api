@@ -36,8 +36,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
 
-import ro.allevo.claudiu.CurrencyEntity;
-import ro.allevo.claudiu.CurrencyResource;
+
 import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.model.EntryQueueEntity;
 import ro.allevo.fintpws.model.MsgTypeListEntity;
@@ -148,9 +147,11 @@ public class MessageTypesResource extends PagedCollection {
 			}
 
 			//mark messages without type as undefined 
-			/*if(items.contains(null)){
-				items.set(items.indexOf(null), "undefined");
-			}*/
+			if(items.contains(null)){
+				MsgTypeListEntity nullEntity = new MsgTypeListEntity();
+				nullEntity.setMessagetype("undefined");
+				items.set(items.indexOf(null), nullEntity);
+				}
 			messageTypesAsJson.put("messagetypes", jsonArray);
 		}else{
 			messageTypesAsJson.put("messagetypes", new JSONArray());

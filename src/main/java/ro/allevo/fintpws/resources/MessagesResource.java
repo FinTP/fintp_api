@@ -170,7 +170,7 @@ public class MessagesResource extends PagedCollection {
 
 			}
 			// TODO: throw here right JSONException for bad request
-
+System.out.println(messageType);
 			this.entityClass = messageType.getClazz();
 			this.setItemsQuery(messageType.getItemsQuery(entityManagerData,
 					atArgument));
