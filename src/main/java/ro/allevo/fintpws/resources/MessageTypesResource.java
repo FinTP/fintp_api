@@ -36,8 +36,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
 
-import ro.allevo.claudiu.CurrencyEntity;
-import ro.allevo.claudiu.CurrencyResource;
+
 import ro.allevo.fintpws.exceptions.ApplicationJsonException;
 import ro.allevo.fintpws.model.EntryQueueEntity;
 import ro.allevo.fintpws.model.MsgTypeListEntity;
