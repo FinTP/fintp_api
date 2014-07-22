@@ -147,9 +147,11 @@ public class MessageTypesResource extends PagedCollection {
 			}
 
 			//mark messages without type as undefined 
-			/*if(items.contains(null)){
-				items.set(items.indexOf(null), "undefined");
-			}*/
+			if(items.contains(null)){
+				MsgTypeListEntity nullEntity = new MsgTypeListEntity();
+				nullEntity.setMessagetype("undefined");
+				items.set(items.indexOf(null), nullEntity);
+				}
 			messageTypesAsJson.put("messagetypes", jsonArray);
 		}else{
 			messageTypesAsJson.put("messagetypes", new JSONArray());
