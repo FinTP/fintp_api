@@ -48,7 +48,7 @@ public enum MessageTypeToViewsEnum {
 	MT_CQ("cq", MtCqView.class),
 	MT_RCQ("rcq", MtRcqView.class),
 	MT_950("950", Mt950View.class),
-	MT_950E("950E", Mt950EView.class),
+	MT_950E("950e", Mt950EView.class),
 	MT_UNDEFINED("undefined", MtUndefinedView.class);
 	
 	

@@ -27,6 +27,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -218,6 +219,9 @@ public class UserResource {
 			if(jsonEntity.has("skincolor")){
 				userEntity.setSkincolor(jsonEntity.optString("skincolor"));
 			}
+			if(jsonEntity.has("email")){
+				userEntity.setEmail(jsonEntity.optString("email"));
+			}
 
 			entityManagerConfig.getTransaction().begin();
 			entityManagerConfig.merge(userEntity);
@@ -251,6 +255,31 @@ public class UserResource {
 				"user updated");
 	}
 	
+	/**
+	 * DLETE method: delete the user
+	 * 
+	 * @param null
+	 * @return Response
+	 */
+	@DELETE
+	public Response deleteUser(){
+		if(null == userEntity){
+			logger.error(String.format(ERROR_MESSAGE_USER_NOT_FOUND, username));
+			throw new EntityNotFoundException(String.format(ERROR_MESSAGE_USER_NOT_FOUND, username));
+		}
+		try{
+			entityManagerConfig.getTransaction().begin();
+			entityManagerConfig.remove(userEntity);
+			entityManagerConfig.getTransaction().commit();
+		} finally{
+			if(null != entityManagerConfig){
+				entityManagerConfig.close();
+			}
+		}
+		
+		return JsonResponseWrapper.getResponse(Response.Status.OK, "user deleted");
+	}
+	
 
 	public static JSONObject asJson(UserEntity userEntity, String path)
 			throws JSONException {
@@ -261,6 +290,7 @@ public class UserResource {
 		userAsJson.put("firstname", userEntity.getFirstname());
 		userAsJson.put("lastname",userEntity.getLastname());
 		userAsJson.put("skincolor", userEntity.getSkincolor());
+		userAsJson.put("email", userEntity.getEmail());
 		return userAsJson;
 	}
 }
