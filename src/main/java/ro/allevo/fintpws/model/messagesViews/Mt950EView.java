@@ -23,7 +23,7 @@ public class Mt950EView extends MtView implements Serializable  {
 	private String insertdate;
 	private String  trn;
 	private String  valuedate;
-	private String  amount;
+	private Integer  amount;
 	private String currency;
 	private String queuename;
 	private String payload;
@@ -72,10 +72,10 @@ public class Mt950EView extends MtView implements Serializable  {
 	public void setValuedate(String valuedate) {
 		this.valuedate = valuedate;
 	}
-	public String getAmount() {
+	public Integer getAmount() {
 		return amount;
 	}
-	public void setAmount(String amount) {
+	public void setAmount(Integer amount) {
 		this.amount = amount;
 	}
 	public String getCurrency() {

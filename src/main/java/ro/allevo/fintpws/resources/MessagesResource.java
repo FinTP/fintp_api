@@ -46,6 +46,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.eclipse.persistence.jpa.JpaQuery;
 import org.springframework.security.access.AccessDeniedException;
 
 import ro.allevo.fintpws.exceptions.ApplicationJsonException;
@@ -157,6 +158,8 @@ public class MessagesResource extends PagedCollection {
 							"type"));
 			this.isDisplayFeatureRequested = true;
 			Timestamp atArgument = null;
+			String trnArgument = null;
+			String amountArgument = null;
 			if (uriInfo.getQueryParameters().containsKey("at")) {
 				try {
 					atArgument = ResourcesUtils.getTimestamp(uriInfo
@@ -169,21 +172,33 @@ public class MessagesResource extends PagedCollection {
 				}
 
 			}
+			if (uriInfo.getQueryParameters().containsKey("trn")) {
+
+				trnArgument = uriInfo.getQueryParameters().getFirst("trn");
+
+			}
+			if (uriInfo.getQueryParameters().containsKey("amount")) {
+
+				amountArgument = uriInfo.getQueryParameters()
+						.getFirst("amount");
+
+			}
 			// TODO: throw here right JSONException for bad request
-System.out.println(messageType);
+			System.out.println(messageType);
 			this.entityClass = messageType.getClazz();
 			this.setItemsQuery(messageType.getItemsQuery(entityManagerData,
-					atArgument));
+					atArgument, trnArgument, amountArgument));
 			this.setTotalQuery(messageType.getTotalQuery(entityManagerData,
 					atArgument));
-			
-			if(null != queueEntity){
+
+			if (null != queueEntity) {
 				this.isMessageInQueue = true;
 			}
 
 		} else {
 			if (null != queueEntity) {
 				this.isMessageInQueue = true;
+
 				this.setItemsQuery(entityManagerData
 						.createNamedQuery("EntryQueueEntity.findAllQueue",
 								EntryQueueEntity.class).setParameter(
@@ -199,6 +214,8 @@ System.out.println(messageType);
 				this.setTotalQuery(entityManagerData.createNamedQuery(
 						"RoutedMessageEntity.findTotalFeedbackagg", Long.class));
 				this.entityClass = RoutedMessageEntity.class;
+			
+				//System.out.println(itemsQuery.unwrap(JpaQuery.class).getDatabaseQuery().getSQLString());
 			}
 		}
 		boolean containFilter = uriInfo.getQueryParameters().containsKey(
@@ -214,6 +231,7 @@ System.out.println(messageType);
 
 		// adding filter options
 		// check if filter through queue is made
+
 		if (queueEntity != null) {
 			filterResource("queuename", queueEntity.getName());
 		} else {
@@ -231,6 +249,7 @@ System.out.println(messageType);
 	 */
 	@Path("{id}")
 	public MessageResource getMessage(@PathParam("id") String messageGuid) {
+
 		return new MessageResource(uriInfo, entityManagerData,
 				entityManagerConfig, messageGuid, isMessageInQueue,
 				needsPayload, queueEntity);
@@ -243,16 +262,19 @@ System.out.println(messageType);
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public JSONObject getMessagesAsJson(@QueryParam("type") String type) {
+	public JSONObject getMessagesAsJson(@QueryParam("type") String type,
+			@QueryParam("trn") String trn, @QueryParam("amount") String amnt) {
 		// authorization
 		if (isMessageInQueue) {
 			if (!RolesUtils.hasReadAuthorityOnQueue(queueEntity)) {
-				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+				throw new ApplicationJsonException(new AccessDeniedException(
+						"forbidden"), "forbidden",
 						Status.FORBIDDEN.getStatusCode());
 			}
 		} else {
 			if (!RolesUtils.hasReportsRole()) {
-				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+				throw new ApplicationJsonException(new AccessDeniedException(
+						"forbidden"), "forbidden",
 						Status.FORBIDDEN.getStatusCode());
 			}
 		}
@@ -284,12 +306,14 @@ System.out.println(messageType);
 		// authorization
 		if (isMessageInQueue) {
 			if (!RolesUtils.hasWriteAuthorityOnQueue(queueEntity)) {
-				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+				throw new ApplicationJsonException(new AccessDeniedException(
+						"forbidden"), "forbidden",
 						Status.FORBIDDEN.getStatusCode());
 			}
 		} else {
 			if (!RolesUtils.hasReportsRole()) {
-				throw new ApplicationJsonException(new AccessDeniedException("forbidden"), "forbidden", 
+				throw new ApplicationJsonException(new AccessDeniedException(
+						"forbidden"), "forbidden",
 						Status.FORBIDDEN.getStatusCode());
 			}
 		}

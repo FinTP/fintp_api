@@ -26,6 +26,14 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.eclipse.persistence.jpa.JpaQuery;
 
 /**
  * @version $Revision: 1.0 $
@@ -78,12 +86,27 @@ public enum MessageTypeToViewsEnum {
 
 
 	public Query getItemsQuery(
-			EntityManager entityManager, Timestamp time) {
-		if(time == null){
-			return entityManager.createNativeQuery("SELECT v FROM " + clazz.getSimpleName() + " v", clazz);
-		}else{
-			return entityManager.createNativeQuery("SELECT v FROM " + clazz.getSimpleName() + " v " +
+			EntityManager entityManager, Timestamp time, String trn, String amnt) {
+		if(time == null && trn==null && amnt == null){
+			return entityManager.createQuery("SELECT v FROM " + clazz.getSimpleName() + " v", clazz);
+		}else if(trn==null && amnt == null){
+			return entityManager.createQuery("SELECT v FROM " + clazz.getSimpleName() + " v " +
 					" WHERE v.insertdate < :at", clazz).setParameter("at", time);
+		}
+		else if(amnt == null){
+			TypedQuery<?> query1 = entityManager.createQuery("SELECT v FROM " + clazz.getSimpleName() + " v " +
+					" WHERE v.trn = :trn ", clazz).setParameter("trn", trn);
+					System.out.println(query1.unwrap(JpaQuery.class).getDatabaseQuery().getSQLString());
+					return query1;
+		/*	return entityManager.createQuery("SELECT v FROM " + clazz.getSimpleName() + " v " +
+					" WHERE v.trn = :trn", clazz).setParameter("trn", trn);*/
+		}
+		else {
+			TypedQuery<?> query1 = entityManager.createQuery("SELECT v FROM " + clazz.getSimpleName() + " v " +
+				" WHERE v.amount = :amnt ", clazz).setParameter("amnt", amnt);
+				System.out.println(query1.unwrap(JpaQuery.class).getDatabaseQuery().getSQLString());
+				return query1;
+			
 		}
 	}
 
