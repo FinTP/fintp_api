@@ -262,8 +262,7 @@ public class MessagesResource extends PagedCollection {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public JSONObject getMessagesAsJson(@QueryParam("type") String type,
-			@QueryParam("trn") String trn, @QueryParam("amount") String amnt) {
+	public JSONObject getMessagesAsJson(@QueryParam("type") String type) {
 		// authorization
 		if (isMessageInQueue) {
 			if (!RolesUtils.hasReadAuthorityOnQueue(queueEntity)) {

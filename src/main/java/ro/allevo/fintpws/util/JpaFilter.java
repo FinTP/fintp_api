@@ -122,7 +122,7 @@ public class JpaFilter {
 
 	private List<Filter> getFilterFileds(Root<?> queryRoot) {
 		List<Filter> entityFilterFileds = new ArrayList<Filter>();
-		
+		Filter filter = new Filter();
 
 		MultivaluedMap<String, String> queryParameters = uriInfo
 				.getQueryParameters();
@@ -130,13 +130,13 @@ public class JpaFilter {
 		String type = "";
 
 		for (String filterFiled : queryParameters.keySet()) {
+			
 			if (filterFiled.startsWith(FILTER)) {
-				Filter filter = new Filter();
+				filter = new Filter();
 				String[] filedValues = filterFiled.split("_");
 				try {
 					filterName = filedValues.length > 1 ? filedValues[1] : null;
 					type = filedValues.length > 2 ? filedValues[2] : "";
-
 					// Check if there are field in entity
 					queryRoot.get(filterName);
 
@@ -158,43 +158,67 @@ public class JpaFilter {
 		String filterType = "";
 		Predicate predicate = cb.conjunction();
 		for (Filter filter : getFilterFileds(queryRoot)) {
-
+			
 			filedName = filter.getName();
 			fieldValue = filter.getValue();
 			filterType = filter.getType();
 			try {
+			
+					
+					
 				switch (FilterType.fromName(filterType)) {
-				case FILTER_TYPE_EXACT:
-					predicate = cb.and(predicate,
-							cb.equal(queryRoot.get(filedName), fieldValue));
-					break;
-				case FILTER_TYPE_CONTAINS:
-					predicate = cb.and(predicate, cb.like(
-							cb.upper(queryRoot.<String> get(filedName)), "%"
-									+ fieldValue.toUpperCase() + "%"));
-					break;
-				case FILTER_TYPE_END:
-					predicate = cb.and(predicate, cb.lessThanOrEqualTo(
-							queryRoot.<Timestamp> get(filedName),
-							ResourcesUtils.getTimestamp(fieldValue)));
-					break;
-				default:
-					switch (FilterJavaType.fromName(queryRoot.get(filedName)
-							.getJavaType().toString())) {
-					case FILTER_TYPE_BIGDECIMAL:
-						predicate = cb.and(predicate, cb.equal(
-								queryRoot.<BigDecimal> get(filedName),
-								fieldValue));
+					case FILTER_TYPE_EXACT:
+						System.out.println(FilterType.fromName(filterType));
+						predicate = cb.and(predicate,
+								cb.equal(queryRoot.get(filedName), fieldValue));
 						break;
-					case FILTER_TYPE_TIMESTAMP:
-						predicate = cb.and(predicate, cb.greaterThanOrEqualTo(
+					case FILTER_TYPE_CONTAINS:
+						System.out.println(FilterType.fromName(filterType));
+						predicate = cb.and(predicate, cb.like(
+								cb.upper(queryRoot.<String> get(filedName)), "%"
+										+ fieldValue.toUpperCase() + "%"));
+
+						break;
+					case FILTER_TYPE_EXACTOR:
+						System.out.println(FilterType.fromName(filterType));
+
+						predicate = cb.or(predicate,
+								cb.equal(queryRoot.get(filedName), fieldValue));
+
+						break;
+					case FILTER_TYPE_CONTAINSOR:
+						System.out.println(FilterType.fromName(filterType));
+
+						predicate = cb.and(predicate, cb.like(
+								cb.upper(queryRoot.<String> get(filedName)), "%"
+										+ fieldValue.toUpperCase() + "%"));
+
+
+						break;
+					case FILTER_TYPE_END:
+						predicate = cb.and(predicate, cb.lessThanOrEqualTo(
 								queryRoot.<Timestamp> get(filedName),
 								ResourcesUtils.getTimestamp(fieldValue)));
 						break;
 					default:
-						break;
+						switch (FilterJavaType.fromName(queryRoot.get(filedName)
+								.getJavaType().toString())) {
+								case FILTER_TYPE_BIGDECIMAL:
+									predicate = cb.and(predicate, cb.equal(
+											queryRoot.<BigDecimal> get(filedName),
+											fieldValue));
+									break;
+								case FILTER_TYPE_TIMESTAMP:
+									predicate = cb.and(predicate, cb.greaterThanOrEqualTo(
+											queryRoot.<Timestamp> get(filedName),
+											ResourcesUtils.getTimestamp(fieldValue)));
+									break;
+								default:
+									break;
+						}
 					}
-				}
+					
+				
 
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
@@ -214,7 +238,10 @@ public class JpaFilter {
 }
 
 enum FilterType {
-	FILTER_TYPE_EXACT("exact"), FILTER_TYPE_CONTAINS(""), FILTER_TYPE_END("end");
+//	FILTER_TYPE_EXACT("exact"), FILTER_TYPE_CONTAINS(""), FILTER_TYPE_END("end");
+	FILTER_TYPE_EXACTOR("exctor"), FILTER_TYPE_CONTAINSOR("cntor"), FILTER_TYPE_EXACT("exact"), FILTER_TYPE_CONTAINS(""), FILTER_TYPE_END("end") ;
+
+
 	String name;
 
 	private FilterType(String name) {
