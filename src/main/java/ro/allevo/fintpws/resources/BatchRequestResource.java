@@ -19,7 +19,6 @@
  */
 
 package ro.allevo.fintpws.resources;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +36,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 import ro.allevo.fintpws.exceptions.ApplicationJsonException;
@@ -105,7 +105,8 @@ public class BatchRequestResource {
 	 * group key
 	 */
 	private String groupKey;
-
+	
+	static int userid  ;
 	/**
 	 * Constructor
 	 * 
@@ -206,30 +207,34 @@ public class BatchRequestResource {
 				batchJSON.put("id", batch.getCombatchid());
 				batchJSON.put("status", status.name());
 				batchJSON.put("progress", percentage);
+				batchJSON.put("user", batch.getUserid());
+				
 				if (!usedBatchUids.contains(batch.getCombatchid())) {
 					comBatchIds.put(batchJSON);
 					usedBatchUids.add(batch.getCombatchid());
 				}
+				userid = batch.getUserid();
 			}
 		}
 
 		if (comBatchIds.length() == 0) {
 			JSONObject entity = new JSONObject().put("code", 202)
 					.put("progress", 0)
-					.put("nb_batches", batchRequestEntities.size());
-
+					.put("nb_batches", batchRequestEntities.size())
+							.put("user", userid);
+			
 			return Response.status(Status.ACCEPTED).entity(entity).build();
 		}
 		if (inProgress) {
 			int percentage = processedCount * 100 / totalCount;
 			JSONObject entity = new JSONObject().put("code", 202)
 					.put("progress", percentage).put("batches", comBatchIds)
-					.put("nb_batches", batchRequestEntities.size());
+					.put("nb_batches", batchRequestEntities.size()).put("user", userid);
 			return Response.status(Status.ACCEPTED).entity(entity).build();
 		}
 
 		requestAsJson.put("groupkey", groupKey).put("batches", comBatchIds)
-				.put("nb_batches", batchRequestEntities.size());
+				.put("nb_batches", batchRequestEntities.size()).put("user", userid);
 
 		return Response.status(Status.CREATED).entity(requestAsJson).build();
 	}

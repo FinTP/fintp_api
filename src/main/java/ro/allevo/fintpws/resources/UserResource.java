@@ -222,6 +222,9 @@ public class UserResource {
 			if(jsonEntity.has("email")){
 				userEntity.setEmail(jsonEntity.optString("email"));
 			}
+			if(jsonEntity.has("userid")){
+				userEntity.setUserid(jsonEntity.optInt("userid"));
+			}
 
 			entityManagerConfig.getTransaction().begin();
 			entityManagerConfig.merge(userEntity);
@@ -287,6 +290,7 @@ public class UserResource {
 				UserResource.class);
 
 		userAsJson.put("username", userEntity.getUsername());
+		userAsJson.put("userid", userEntity.getUserid());
 		userAsJson.put("firstname", userEntity.getFirstname());
 		userAsJson.put("lastname",userEntity.getLastname());
 		userAsJson.put("skincolor", userEntity.getSkincolor());

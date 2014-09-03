@@ -72,6 +72,7 @@ public class BatchRequestEntity implements Serializable {
 	private String requestid;
 	private String batchuid;
 	private String groupkey;
+	private Integer userid;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@PrimaryKeyJoinColumn(name = "USERID")
@@ -94,6 +95,14 @@ public class BatchRequestEntity implements Serializable {
 
 	public UserEntity getUserEntity() {
 		return userEntity;
+	}
+
+	public Integer getUserid() {
+		return userid;
+	}
+
+	public void setUserid(Integer userid) {
+		this.userid = userid;
 	}
 
 }
